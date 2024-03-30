@@ -2,6 +2,7 @@
 #define QENDPOINT_H
 
 #include <QIODevice>
+#include <QAudioFormat>
 
 /**
  *  this class is a relatively thin Qt-compatible wrapper
