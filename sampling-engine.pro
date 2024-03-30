@@ -12,13 +12,15 @@ SOURCES += \
     src/basicosc.cpp \
     src/main.cpp \
     src/mainwindow.cpp \
-    src/qendpoint.cpp
+    src/qendpoint.cpp \
+    src/sescript.cpp
 
 HEADERS += \
     src/basicosc.h \
     src/mainwindow.h \
     src/qendpoint.h \
-    src/sebase.h
+    src/sebase.h \
+    src/sescript.h
 
 FORMS += \
     src/mainwindow.ui

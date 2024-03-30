@@ -2,21 +2,6 @@
 
 #include <memory>
 
-// class BasicOsc : public AudioGen {
-// public:
-
-//     BasicOsc() = default;
-
-//     std::unique_ptr<float[]> readData(int len);
-
-// private:
-
-//     float freq_;
-//     uint32_t phase_;
-
-//     std::unique_ptr<float[]> buf_;
-// };
-
 namespace SE {
 
 std::unique_ptr<float[]> BasicOsc::readData(size_t len) {

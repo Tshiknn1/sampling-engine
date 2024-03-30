@@ -2,6 +2,7 @@
 #define BASICOSC_H
 
 #include <memory>
+#include <array>
 #include "sebase.h"
 
 #define SAMPLERATE 44100
