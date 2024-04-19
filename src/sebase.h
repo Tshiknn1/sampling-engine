@@ -13,17 +13,49 @@
 
 namespace SE {
 
-class AudioGen {
+// forward declaration
+struct Modulation;
+
+
+class Modulatable {
 public:
-    virtual std::unique_ptr<float[]> readData(size_t len);
-    virtual void reset();
-    virtual void start();
-    virtual void stop();
+    virtual void registerModulation(Modulation* mod) = 0;
+    virtual void removeModulation(Modulation* mod) = 0;
 };
 
-class TrigGen {
+
+class AudioGen : public Modulatable {
+public:
+    virtual ~AudioGen() { }
+
+    virtual std::unique_ptr<float[]> readData(size_t len) = 0;
+    virtual void reset() = 0;
+    virtual void start() = 0;
+    virtual void stop() = 0;
+    virtual bool isActive() const = 0;
+
+    virtual void registerModulation(Modulation* mod) = 0;
+    virtual void removeModulation(Modulation* mod) = 0;
+};
+
+
+class TrigGen : public Modulatable {
 public:
     virtual std::unique_ptr<size_t[]> readTrigIndices(size_t len);
+
+private:
+    size_t updateDelta();
+};
+
+
+class ValueGen : public Modulatable {
+
+};
+
+
+struct Modulation {
+    ValueGen* source;
+    Modulatable* dest;
 };
 
 }

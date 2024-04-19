@@ -16,15 +16,21 @@ namespace SE {
  * to the system via Qt.
  */
 class BasicOsc : public AudioGen {
+
 public:
 
     BasicOsc() = default;
+    ~BasicOsc() { }
 
     std::unique_ptr<float[]> readData(size_t len) override;
     void updateWaveform(float freq, float ampl = 1.f);      // this may end up being abstracted away somehow
     void reset() override;
     void start() override;
     void stop() override;
+    bool isActive() const override;
+
+    void registerModulation(Modulation* m) override { }
+    void removeModulation(Modulation* m) override { }
 
 private:
 

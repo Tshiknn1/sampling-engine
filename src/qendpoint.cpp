@@ -11,6 +11,10 @@ QEndpoint::QEndpoint(const QAudioFormat& format, SE::AudioGen* master) :
     }
 }
 
+bool QEndpoint::isActive() const {
+    return master_->isActive();
+}
+
 void QEndpoint::start() {
     open(QIODevice::ReadOnly | QIODevice::Unbuffered);
 }
@@ -28,9 +32,9 @@ void QEndpoint::noteOff() {
 }
 
 // obviously this is a placeholder
-void QEndpoint::updateFreq(qint64 noteVal) {
+void QEndpoint::updateFreq(float freq) {
     Q_ASSERT(static_cast<SE::BasicOsc*>(master_));
-    static_cast<SE::BasicOsc*>(master_)->updateWaveform(noteVal);
+    static_cast<SE::BasicOsc*>(master_)->updateWaveform(freq);
 }
 
 qint64 QEndpoint::readData(char *data, qint64 maxlen) {
@@ -46,5 +50,6 @@ qint64 QEndpoint::readData(char *data, qint64 maxlen) {
         ptr += sampleBytes;
     }
 
+    lastBufferSize_ = maxlen;
     return maxlen;
 }
