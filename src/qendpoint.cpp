@@ -34,7 +34,7 @@ void QEndpoint::noteOff() {
 // obviously this is a placeholder
 void QEndpoint::updateFreq(float freq) {
     Q_ASSERT(static_cast<SE::BasicOsc*>(master_));
-    static_cast<SE::BasicOsc*>(master_)->updateWaveform(freq);
+    dynamic_cast<SE::BasicOsc*>(master_)->updateWaveform(freq);
 }
 
 qint64 QEndpoint::readData(char *data, qint64 maxlen) {

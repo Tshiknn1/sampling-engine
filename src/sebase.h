@@ -49,13 +49,17 @@ private:
 
 
 class ValueGen : public Modulatable {
-
+public:
+    virtual float nextValue() = 0;
+    virtual void reset() = 0;
 };
 
 
 struct Modulation {
+    enum class ModulationType { Add, Mult };
     ValueGen* source;
-    Modulatable* dest;
+    ModulationType type;
+    float factor;
 };
 
 }
