@@ -8,7 +8,6 @@
 #include "AudioFile.h"
 
 #include <memory>
-#include <fstream>
 #include <cstdint>
 #include <limits>
 
@@ -20,11 +19,11 @@ std::unique_ptr<float[]> SamplePlayer::readData(size_t len) {
     if (active_) {
         for (size_t pos = 0; pos < len; pos++) {
             resbuf[pos] = buf_[pos_];
-            for (const Modulation& mod : mods_) {
-                if (mod.type == Modulation::ModulationType::Mult) {
-                    resbuf[pos] *= (mod.source->nextValue() * mod.factor);
+            for (Modulation* mod : mods_) {
+                if (mod->type == Modulation::ModulationType::Mult) {
+                    resbuf[pos] *= (mod->source->nextValue() * mod->factor);
                 } else {
-                    resbuf[pos] += (mod.source->nextValue() * mod.factor);
+                    resbuf[pos] += (mod->source->nextValue() * mod->factor);
                 }
             }
             pos_ = (pos_ + 1) % buflen_;
@@ -50,7 +49,7 @@ void SamplePlayer::loadSample(const char *path) {
     buf_.reset(new float[buflen_]);
     const float scalingFactor = 1.f / std::numeric_limits<int16_t>::max();  // we need to rescale to float
     for (size_t pos = 0; pos < buflen_; pos++) {
-        buf_[pos] = fh.samples[0][pos] * scalingFactor;
+        buf_[pos] = fh.samples[0][pos] * scalingFactor; // mono
     }
 }
 

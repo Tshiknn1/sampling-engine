@@ -6,6 +6,7 @@
 #define SEBASE_H
 
 #include <memory>
+#include <vector>
 
 #define SE_SCRIPT_START(mgen) SE::AudioGen* master(...) { SE::AudioGen* master = mgen;
 #define SE_SCRIPT_END return master; }
@@ -25,17 +26,19 @@ public:
 
 
 class AudioGen : public Modulatable {
+
+private:
+    bool active_;
+
 public:
     virtual ~AudioGen() { }
 
     virtual std::unique_ptr<float[]> readData(size_t len) = 0;
+    virtual float readNext() = 0;
     virtual void reset() = 0;
-    virtual void start() = 0;
-    virtual void stop() = 0;
+    virtual void start() { active_ = true; }
+    virtual void stop() { active_ = false; }
     virtual bool isActive() const = 0;
-
-    virtual void registerModulation(Modulation* mod) = 0;
-    virtual void removeModulation(Modulation* mod) = 0;
 };
 
 
@@ -48,18 +51,27 @@ private:
 };
 
 
+/* here we have a problem. different uses of
+ * ValueGen will use different types, but this
+ * is a serious problem in C++ because we need
+ * to know what type to expect. templates may not
+ * work; but what other option is there? */
+template <typename T>
 class ValueGen : public Modulatable {
 public:
-    virtual float nextValue() = 0;
+    virtual T nextValue() = 0;
     virtual void reset() = 0;
 };
 
 
 struct Modulation {
     enum class ModulationType { Add, Mult };
-    ValueGen* source;
+    ValueGen<float>* source;
     ModulationType type;
     float factor;
+
+    template <typename T>
+    void process(T* dest);
 };
 
 }

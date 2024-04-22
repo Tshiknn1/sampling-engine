@@ -11,6 +11,21 @@ namespace SE {
 
 class SamplePlayer : public AudioGen {  // for now we are just using mono - later we can introduce stereo
 
+private:
+    size_t startIndex_;
+    size_t endIndex_;
+    size_t buflen_;
+    size_t pos_;
+
+    bool active_;
+    bool loop_;
+
+    const int samplerate_ = 44100;
+
+    std::unique_ptr<float[]> buf_;
+
+    std::vector<Modulation*> mods_;
+
 public:
 
     void loadSample(const char* path);
@@ -22,22 +37,11 @@ public:
     void stop() override;
     bool isActive() const override;
 
+    void loops(bool loop) { loop_ = loop; }
+    constexpr bool loops() const { return loop_; }
+
     void registerModulation(Modulation* m) override { }
     void removeModulation(Modulation* m) override { }
-
-private:
-    size_t startIndex_;
-    size_t endIndex_;
-    size_t buflen_;
-    size_t pos_;
-
-    bool active_;
-
-    const int samplerate_ = 44100;
-
-    std::unique_ptr<float[]> buf_;
-
-    std::vector<Modulation> mods_;
 };
 
 }

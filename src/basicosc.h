@@ -22,8 +22,14 @@ public:
     BasicOsc() = default;
     ~BasicOsc() { }
 
+    enum class Waveform { Saw, Square };
+
     std::unique_ptr<float[]> readData(size_t len) override;
+    float readNext() override;
+
     void updateWaveform(float freq, float ampl = 1.f);      // this may end up being abstracted away somehow
+    void updateWaveform(float freq, Waveform wf, float ampl = 1.f);
+
     void reset() override;
     void start() override;
     void stop() override;
