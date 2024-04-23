@@ -23,8 +23,7 @@ private:
 
     const int samplerate_ = 44100;
 
-    std::unique_ptr<float[]> buf_;
-
+    std::vector<float> buf_;
     std::vector<TrigGen*> trigGens_;
 
 public:
@@ -32,7 +31,7 @@ public:
     void loadSample(const char* path);
     void repitchSample(const float deviation);    // deviation is a percentage
 
-    std::unique_ptr<float[]> readData(size_t len) override;
+    std::vector<float> readData(size_t len) override;
     void reset() override;
     void start() override;
     void stop() override;

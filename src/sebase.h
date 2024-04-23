@@ -22,6 +22,7 @@ public:
     virtual std::vector<T> readData(size_t len) { return std::vector<T>(len); }
     virtual T readNext() { return T{}; };
     virtual void advance(size_t len) { }
+    virtual void reset() { }
 };
 
 
@@ -33,14 +34,14 @@ struct Modulation {
         Value
     };
 
-    Generator<float> source;
+    Generator<float>* source;
     ModulationType type;
     ModulationDestination dest;
     float scale;
 
     template <typename T>
     T process(T input) {
-        float val = (source.readNext() * scale);
+        float val = (source->readNext() * scale);
         T r = input;
         switch (type) {
         case ModulationType::Add:
@@ -51,6 +52,10 @@ struct Modulation {
             break;
         }
         return r;
+    }
+
+    void reset() {
+        source->reset();
     }
 };
 

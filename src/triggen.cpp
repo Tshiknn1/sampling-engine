@@ -5,13 +5,13 @@
 
 namespace SE {
 
-std::unique_ptr<bool[]> TrigGen::readData(size_t len) {
+std::vector<bool> TrigGen::readData(size_t len) {
     if (!bufIsFresh_) {
         generateData(len);
         bufIsFresh_ = true;
     }
-    std::unique_ptr<bool[]> resbuf(new bool[len]);
-    std::copy(buf_[0], buf_[len], resbuf.get());
+    std::vector<bool> resbuf(len, false);
+    std::copy(buf_[0], buf_[len], resbuf.begin());
 }
 
 void TrigGen::reset() {
@@ -19,18 +19,17 @@ void TrigGen::reset() {
     bufIsFresh_ = false;
 }
 
-void TrigGen::generateData(size_t len) {
-    bool* newbuf = new bool[len];
+void TrigGen::generateData(const size_t len) {
+    buf_.resize(len);
     for (size_t pos = 0; pos < len; pos++) {
         if (pos_++ % delta_ == 0) {
-            newbuf[pos] = true;
+            buf_[pos] = true;
             delta_ = nextDelta();
             pos_ = 0;
         } else {
-            newbuf[pos] = false;
+            buf_[pos] = false;
         }
     }
-    buf_.reset(newbuf);
 }
 
 size_t TrigGen::nextDelta() {

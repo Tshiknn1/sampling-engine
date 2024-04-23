@@ -13,9 +13,9 @@
 
 namespace SE {
 
-std::unique_ptr<float[]> SamplePlayer::readData(const size_t len) {
-    if (len == 0) return nullptr;
-    std::unique_ptr<float[]> resbuf(new float[len]);
+std::vector<float> SamplePlayer::readData(const size_t len) {
+    if (len == 0) return std::vector<float>(0);
+    std::vector<float> resbuf(len, 0.f);
     if (active_) {
         std::vector<bool> trigbuf(len, false);
         if (triggered_) {
@@ -47,10 +47,6 @@ std::unique_ptr<float[]> SamplePlayer::readData(const size_t len) {
                 else stop();
             }
         }
-    } else {
-        for (size_t pos = 0; pos < len; pos++) {
-            resbuf[pos] = 0.f;
-        }
     }
 
     return resbuf;
@@ -66,23 +62,29 @@ void SamplePlayer::loadSample(const char *path) {
     fh.load(path);
 
     buflen_ = fh.getNumSamplesPerChannel();
-    buf_.reset(new float[buflen_]);
+    buf_.resize(buflen_);
     const float scalingFactor = 1.f / std::numeric_limits<int16_t>::max();  // we need to rescale to float
     for (size_t pos = 0; pos < buflen_; pos++) {
         buf_[pos] = fh.samples[0][pos] * scalingFactor; // mono
     }
 }
 
-void SamplePlayer::repitchSample(const float deviation) {
-    size_t newlen = buflen_ / deviation;
-    float* newbuf = new float[newlen];
+void SamplePlayer::repitchSample(const float& deviation) {
+    buflen_ /= deviation;
+    buf_.resize(buflen_);
     size_t resizedPos;
-    for (size_t pos = 0; pos < newlen; pos++) {
+    for (size_t pos = 0; pos < buflen_; pos++) {
         resizedPos = pos * deviation;
-        newbuf[pos] = buf_[resizedPos]; // interpolation can come later
+        buf_[pos] = buf_[resizedPos]; // interpolation can come later
     }
-    buf_.reset(newbuf);
     pos_ /= deviation;
+}
+
+void SamplePlayer::reset() {
+    pos_ = 0;
+    for (Modulation m : mods_) {
+        m.reset();
+    }
 }
 
 void SamplePlayer::registerTrig(TrigGen* tg) {
