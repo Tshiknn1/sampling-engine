@@ -20,7 +20,7 @@ std::unique_ptr<float[]> SamplePlayer::readData(const size_t len) {
         std::vector<bool> trigbuf(len, false);
         if (triggered_) {
             for (TrigGen* tg : trigGens_) {
-                std::unique_ptr<bool[]> thisTrigBuf = tg->readData(len);
+                std::vector<bool> thisTrigBuf = tg->readData(len);
                 for (size_t i = 0; i < len; i++) {
                     trigbuf[i] = trigbuf[i] || thisTrigBuf[i];
                 }

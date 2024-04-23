@@ -19,7 +19,7 @@ namespace SE {
 template <typename T>
 class Generator {
 public:
-    virtual std::unique_ptr<T[]> readData(size_t len) { return std::unique_ptr<T[]>(new T[] {}); }
+    virtual std::vector<T> readData(size_t len) { return std::vector<T>(len); }
     virtual T readNext() { return T{}; };
     virtual void advance(size_t len) { }
 };
@@ -81,7 +81,7 @@ private:
 
     bool bufIsFresh_ = false;
     bool reset_ = true;
-    std::unique_ptr<bool[]> buf_;
+    std::vector<bool> buf_;
     size_t bufSize_;
 
     size_t delta_;
@@ -93,7 +93,7 @@ protected:
     const std::vector<Modulation::ModulationDestination> allowed_ = { Modulation::ModulationDestination::Value };
 
 public:
-    virtual std::unique_ptr<bool[]> readData(size_t len) override;
+    virtual std::vector<bool> readData(size_t len) override;
     virtual bool readNext() override;
     virtual void reset();
     void readDone() { bufIsFresh_ = false; }
@@ -108,7 +108,7 @@ protected:
 public:
     virtual ~AudioGen() { }
 
-    virtual std::unique_ptr<float[]> readData(size_t len) { return std::unique_ptr<float[]>(new float[len] {}); }
+    virtual std::vector<float> readData(size_t len) { return std::vector<float>(len); }
     virtual void reset() { }
     virtual void start() { active_ = true; }
     virtual void stop() { active_ = false; }
