@@ -67,7 +67,7 @@ float BasicOsc::generate(size_t pos) {
     return (pos * 2 * ampl_ * freq_ / SAMPLERATE) - ampl_;
 }
 
-void BasicOsc::reset() { // just saying this is typed with a RealForce R2. but the weight is a little heavy for me!
+void BasicOsc::reset() {
     phase_ = 0;
 }
 

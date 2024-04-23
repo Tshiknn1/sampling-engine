@@ -2,6 +2,7 @@
 #define MASTERBUS_H
 
 #include "sebase.h"
+#include "triggen.h"
 
 #include <map>
 
@@ -17,18 +18,20 @@ public:
     void stop() override;
     bool isActive() const override;
 
-    void addAudioGen(const char* name, AudioGen* obj);
+    void addAudioGen(const char* name, AudioGen obj);
     void removeAudioGen(const char* name);
-    void addTrigGen(const char* name, TrigGen* trig);
+    void addTrigGen(const char* name, TrigGen trig);
     void removeTrigGen(const char* name);
     void link(const char* trig, const char* audio);
 
-    AudioGen* audioGen(const char* name);
-    TrigGen* trigGen(const char* name);
+    AudioGen& audioGen(const char* name);
+    TrigGen& trigGen(const char* name);
+
+    void registerModulation(Modulation m) override { }  // MasterBus accepts no Modulations
 
 private:
-    std::map<const char*, AudioGen*> audioGens_;
-    std::map<const char*, TrigGen*> trigGens_;
+    std::map<const char*, AudioGen> audioGens_;
+    std::map<const char*, TrigGen> trigGens_;
 };
 
 }

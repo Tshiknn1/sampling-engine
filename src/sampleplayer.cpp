@@ -13,26 +13,46 @@
 
 namespace SE {
 
-std::unique_ptr<float[]> SamplePlayer::readData(size_t len) {
+std::unique_ptr<float[]> SamplePlayer::readData(const size_t len) {
     if (len == 0) return nullptr;
     std::unique_ptr<float[]> resbuf(new float[len]);
     if (active_) {
-        for (size_t pos = 0; pos < len; pos++) {
-            resbuf[pos] = buf_[pos_];
-            for (Modulation* mod : mods_) {
-                if (mod->type == Modulation::ModulationType::Mult) {
-                    resbuf[pos] *= (mod->source->nextValue() * mod->factor);
-                } else {
-                    resbuf[pos] += (mod->source->nextValue() * mod->factor);
+        std::vector<bool> trigbuf(len, false);
+        if (triggered_) {
+            for (TrigGen* tg : trigGens_) {
+                std::unique_ptr<bool[]> thisTrigBuf = tg->readData(len);
+                for (size_t i = 0; i < len; i++) {
+                    trigbuf[i] = trigbuf[i] || thisTrigBuf[i];
                 }
             }
-            pos_ = (pos_ + 1) % buflen_;
+        }
+
+        for (size_t pos = 0; pos < len; pos++) {
+            if (trigbuf[pos]) reset();
+
+            resbuf[pos] = buf_[pos_];
+
+            for (Modulation mod : mods_) {
+                if (mod.dest == Modulation::ModulationDestination::Amplitude) {
+                    resbuf[pos] = mod.process(resbuf[pos]);
+                } else if (mod.dest == Modulation::ModulationDestination::Frequency) {
+                    repitchSample(mod.process(1.f));
+                    resbuf[pos] = buf_[pos_];
+                }
+            }
+
+            pos_++;
+            if (pos_ >= buflen_) {
+                if (loop_) pos_ = 0;
+                else stop();
+            }
         }
     } else {
         for (size_t pos = 0; pos < len; pos++) {
             resbuf[pos] = 0.f;
         }
     }
+
     return resbuf;
 }
 
@@ -63,6 +83,10 @@ void SamplePlayer::repitchSample(const float deviation) {
     }
     buf_.reset(newbuf);
     pos_ /= deviation;
+}
+
+void SamplePlayer::registerTrig(TrigGen* tg) {
+    trigGens_.push_back(tg);
 }
 
 }

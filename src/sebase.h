@@ -7,6 +7,7 @@
 
 #include <memory>
 #include <vector>
+#include <algorithm>
 
 #define SE_SCRIPT_START(mgen) SE::AudioGen* master(...) { SE::AudioGen* master = mgen;
 #define SE_SCRIPT_END return master; }
@@ -14,41 +15,108 @@
 
 namespace SE {
 
-// forward declaration
-struct Modulation;
+/* base class for all generator objects */
+template <typename T>
+class Generator {
+public:
+    virtual std::unique_ptr<T[]> readData(size_t len) { return std::unique_ptr<T[]>(new T[] {}); }
+    virtual T readNext() { return T{}; };
+    virtual void advance(size_t len) { }
+};
+
+
+struct Modulation {
+    enum class ModulationType { Add, Mult };
+    enum class ModulationDestination {
+        Frequency,
+        Amplitude,
+        Value
+    };
+
+    Generator<float> source;
+    ModulationType type;
+    ModulationDestination dest;
+    float scale;
+
+    template <typename T>
+    T process(T input) {
+        float val = (source.readNext() * scale);
+        T r = input;
+        switch (type) {
+        case ModulationType::Add:
+            r += val;
+            break;
+        case ModulationType::Mult:
+            r *= val;
+            break;
+        }
+        return r;
+    }
+};
 
 
 class Modulatable {
 public:
-    virtual void registerModulation(Modulation* mod) = 0;
-    virtual void removeModulation(Modulation* mod) = 0;
+    virtual void registerModulation(Modulation mod) {
+        if (std::find(allowed_.begin(), allowed_.end(), mod.dest) != allowed_.end()) {
+            mods_.push_back(mod);
+        }
+    }
+
+    virtual void removeModulation(Modulation mod) { }
+
+    virtual const std::vector<Modulation::ModulationDestination> allowableDestinations() const { return allowed_; }
+
+protected:
+    std::vector<Modulation> mods_;
+    const std::vector<Modulation::ModulationDestination> allowed_;
 };
 
 
-class AudioGen : public Modulatable {
+class TrigGen : public Modulatable, public Generator<bool> {
 
 private:
+    size_t nextDelta();
+    void generateData(size_t len);
+
+    bool bufIsFresh_ = false;
+    bool reset_ = true;
+    std::unique_ptr<bool[]> buf_;
+    size_t bufSize_;
+
+    size_t delta_;
+    size_t pos_;
+
+    Generator<size_t> vg_;
+
+protected:
+    const std::vector<Modulation::ModulationDestination> allowed_ = { Modulation::ModulationDestination::Value };
+
+public:
+    virtual std::unique_ptr<bool[]> readData(size_t len) override;
+    virtual bool readNext() override;
+    virtual void reset();
+    void readDone() { bufIsFresh_ = false; }
+};
+
+
+class AudioGen : public Modulatable, public Generator<float> {
+
+protected:
     bool active_;
 
 public:
     virtual ~AudioGen() { }
 
-    virtual std::unique_ptr<float[]> readData(size_t len) = 0;
-    virtual float readNext() = 0;
-    virtual void reset() = 0;
+    virtual std::unique_ptr<float[]> readData(size_t len) { return std::unique_ptr<float[]>(new float[len] {}); }
+    virtual void reset() { }
     virtual void start() { active_ = true; }
     virtual void stop() { active_ = false; }
-    virtual bool isActive() const = 0;
+    virtual bool isActive() const { return active_; }
+
+    virtual void registerTrig(TrigGen* tg) { }
 };
 
-
-class TrigGen : public Modulatable {
-public:
-    virtual std::unique_ptr<size_t[]> readTrigIndices(size_t len);
-
-private:
-    size_t updateDelta();
-};
 
 
 /* here we have a problem. different uses of
@@ -57,22 +125,11 @@ private:
  * to know what type to expect. templates may not
  * work; but what other option is there? */
 template <typename T>
-class ValueGen : public Modulatable {
+class ValueGen : public Modulatable, public Generator<T> {
 public:
-    virtual T nextValue() = 0;
-    virtual void reset() = 0;
+    virtual void reset() { };
 };
 
-
-struct Modulation {
-    enum class ModulationType { Add, Mult };
-    ValueGen<float>* source;
-    ModulationType type;
-    float factor;
-
-    template <typename T>
-    void process(T* dest);
-};
 
 }
 

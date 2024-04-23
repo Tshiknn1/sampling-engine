@@ -10,7 +10,7 @@ namespace SE {
 /* again, this could be templated, but
  * it would be extra work that I don't
  * want to do YET... */
-class FloatPtrValueGen : public ValueGen {
+class FloatPtrValueGen : public ValueGen<float> {
 
 private:
     /* while looking into shared_ptrs, I

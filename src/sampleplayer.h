@@ -19,12 +19,13 @@ private:
 
     bool active_;
     bool loop_;
+    bool triggered_;
 
     const int samplerate_ = 44100;
 
     std::unique_ptr<float[]> buf_;
 
-    std::vector<Modulation*> mods_;
+    std::vector<TrigGen*> trigGens_;
 
 public:
 
@@ -40,8 +41,9 @@ public:
     void loops(bool loop) { loop_ = loop; }
     constexpr bool loops() const { return loop_; }
 
-    void registerModulation(Modulation* m) override { }
-    void removeModulation(Modulation* m) override { }
+    void removeModulation(Modulation m) override { }
+
+    void registerTrig(TrigGen* tg) override;
 };
 
 }

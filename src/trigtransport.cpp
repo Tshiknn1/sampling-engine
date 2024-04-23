@@ -20,7 +20,7 @@ std::unique_ptr<float[]> TrigTransport::readData(size_t len) {
             }
 
             if (reading_) {
-                resbuf[i] = source_->readData(1)[0];
+                resbuf[i] = source_->readNext();
             } else {
                 resbuf[i] = 0.f;
             }
@@ -35,8 +35,8 @@ std::unique_ptr<float[]> TrigTransport::readData(size_t len) {
 
 size_t TrigTransport::calculateNextDelta() {
     size_t delta = primaryGen_->nextValue();
-    for (Modulation* m : mods_) {
-        m->process(&delta);
+    for (Modulation m : mods_) {
+        m.process(&delta);
     }
     return delta;
 }
