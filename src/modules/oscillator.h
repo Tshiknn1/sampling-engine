@@ -39,6 +39,10 @@ public:
 
     enum class Waveform { Saw, Square, Tri, Noise };
 
+    explicit Oscillator(AudioFormat fmt) {
+        setFormat(fmt);
+    }
+
     // read
     float read() override;
     float read() const override;
@@ -95,8 +99,6 @@ private:
     std::vector<float> output_buf_;
     float output_val_;
     size_t pos_ = 0;
-
-    int sampleRate_;
 
     // flags
     bool active_ = false;

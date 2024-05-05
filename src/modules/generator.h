@@ -6,6 +6,8 @@
 #include <limits>
 #include <type_traits>
 
+#include "../audioformat.h"
+
 namespace SE {
 
 template<typename T>
@@ -28,6 +30,11 @@ public:
     virtual void refresh() = 0;
     virtual void start() = 0;
     virtual void stop() = 0;
+
+    virtual void setFormat(AudioFormat af) {
+        sampleRate_ = af.sampleRate;
+        numChannels_ = af.numChannels;
+    }
 
     virtual bool isActive() const = 0;
 
@@ -71,6 +78,9 @@ protected:
             }
         }
     }
+
+    int sampleRate_;
+    int numChannels_;
 
 };
 

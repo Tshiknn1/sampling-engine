@@ -11,11 +11,6 @@
 namespace SE {
 
 
-const std::vector<Generator*> memberVector() const {
-
-}
-
-
 void SynthSection::initializeModules() {
     env_to_osc = osc.modulate(&osc.amplitude(), Modulator<float>([&] (float* ptr) {
         *ptr *= env.read();
@@ -140,6 +135,51 @@ std::vector<float> SynthSection::read(const size_t& len) {
 
 const std::vector<float> SynthSection::read(const size_t& len) const {
     return output_buf_;
+}
+
+
+void SynthSection::start() {
+    trig.start();
+    trigSeq.start();
+    pitchSeq.start();
+    env.start();
+    osc.start();
+    lfo.start();
+}
+
+
+void SynthSection::stop() {
+    trig.stop();
+    trigSeq.stop();
+    pitchSeq.stop();
+    env.stop();
+    osc.stop();
+    lfo.stop();
+}
+
+
+void SynthSection::reset() {
+    trig.reset();
+    trigSeq.reset();
+    pitchSeq.reset();
+    env.reset();
+    osc.reset();
+    lfo.reset();
+}
+
+
+void SynthSection::refresh() {
+    trig.refresh();
+    trigSeq.refresh();
+    pitchSeq.refresh();
+    env.reset();
+    osc.reset();
+    lfo.reset();
+}
+
+
+bool SynthSection::isActive() const {
+    return osc.isActive();
 }
 
 

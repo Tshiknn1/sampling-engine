@@ -15,6 +15,10 @@ class Trigger : public Generator<int> {
 
 public:
 
+    explicit Trigger(AudioFormat af) {
+        setFormat(af);
+    }
+
     int read() override;
     int read() const override;
     std::vector<int> read(const size_t& len) override;

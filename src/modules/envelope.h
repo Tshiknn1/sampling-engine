@@ -22,6 +22,10 @@ public:
 
     enum class EnvState { Attack, Hold, Release, Idle };
 
+    explicit Envelope(AudioFormat af) {
+        setFormat(af);
+    }
+
     // read
     float read() override;
     float read() const override;

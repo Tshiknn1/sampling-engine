@@ -9,6 +9,7 @@
 #include "modules/trigger.h"
 #include "modules/envelope.h"
 #include "modules/sequence.h"
+#include "masterbus.h"
 
 
 namespace SE {
@@ -28,6 +29,17 @@ public:
         None
     };
 
+    explicit SamplerSection(AudioFormat fmt) :
+        player(fmt),
+        lfo(fmt),
+        trig(fmt),
+        env(fmt),
+        trigSeq(fmt),
+        pitchSeq(fmt)
+    {
+        setFormat(fmt);
+    }
+
     void initializeModules();
 
     void clearMods();
@@ -37,6 +49,20 @@ public:
     float read() const override;
     std::vector<float> read(const size_t& len) override;
     const std::vector<float> read(const size_t& len) const override;
+
+    void start() override;
+    void stop() override;
+    void reset() override;
+    void refresh() override;
+    bool isActive() const override;
+
+    // ref getters
+    SamplePlayer& getPlayer() { return player; }
+    Oscillator& getLFO() { return lfo; }
+    Trigger& getTrigger() { return trig; }
+    Envelope& getEnv() { return env; }
+    Sequence<int>& getTrigSeq() { return trigSeq; }
+    Sequence<float>& getPitchSeq() { return pitchSeq; }
 
 private:
 

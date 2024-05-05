@@ -99,12 +99,17 @@ void SamplePlayer::loadSample(std::string path) {
     // fh.open(path, std::ios_base::in | std::ios_base::binary);
     AudioFile<float> fh;    // let's use a random library i got on github for this
     fh.load(path);
+    const int fhSampleRate = fh.getSampleRate();
 
     buf_size_ = fh.getNumSamplesPerChannel();
     sample_buf_.resize(buf_size_);
     const float scalingFactor = 1.f / std::numeric_limits<int16_t>::max();  // we need to rescale to float
     for (size_t pos = 0; pos < buf_size_; pos++) {
         sample_buf_[pos] = fh.samples[0][pos] * scalingFactor; // mono
+    }
+
+    if (fhSampleRate != sampleRate_) {
+        repitch(static_cast<float>(sampleRate_) / fhSampleRate);
     }
 }
 

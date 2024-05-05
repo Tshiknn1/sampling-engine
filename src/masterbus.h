@@ -2,30 +2,45 @@
 #define MASTERBUS_H
 
 #include "modules/generator.h"
+#include "audioformat.h"
 
 namespace SE {
 
 
-class MasterBus {
+class MasterBus : public Generator<float> {
 
 public:
 
-    float read();
-    std::vector<float> read(const size_t& len);
+    explicit MasterBus(AudioFormat fmt) {
+        setFormat(fmt);
+    }
 
-    void start();
-    void stop();
-    void reset();
+
+    float read() override;
+    float read() const override;
+    std::vector<float> read(const size_t& len) override;
+    const std::vector<float> read(const size_t& len) const override;
+
+    void start() override;
+    void stop() override;
+    void reset() override;
+    void refresh() override;
 
     void addAudioGen(Generator<float>* gen);
 
-    bool isActive();
+    bool isActive() const override;
 
 private:
 
     std::vector<Generator<float>*> audioGens_;
 
+    std::vector<float> output_buf_;
+    float output_val_;
+
     bool active_;
+
+    int sampleRate_;
+    int numChannels_;
 
 };
 

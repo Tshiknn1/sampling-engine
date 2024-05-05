@@ -1,6 +1,7 @@
 #include "qendpoint.h"
 
 #include <QIODevice>
+#include <memory>
 #include "modules/generator.h"
 
 

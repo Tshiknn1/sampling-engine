@@ -15,6 +15,10 @@ class Sequence : public Generator<T> {
 
 public:
 
+    explicit Sequence(AudioFormat af) {
+        Generator<T>::setFormat(af);
+    }
+
     // read
     T read() override;
     T read() const override;
@@ -31,6 +35,10 @@ public:
     // state getter
     bool isActive() const override { return active_; }
 
+    T& at(size_t index);
+    void resize(size_t size) { size_ = size; }
+    constexpr size_t size() const { return size_; }
+
     // modulation control
     template<typename S>
     ModIndex modulate(S* field,
@@ -43,6 +51,7 @@ private:
 
     // parameters
     std::vector<T> values_;
+    size_t size_;
 
     // mod vectors
     std::vector<Modulator<std::vector<T>>> value_mods_;
@@ -52,8 +61,6 @@ private:
     std::vector<T> output_buf_;
     T output_val_;
     size_t pos_ = 0;
-
-    int sampleRate_;
 
     // flags
     bool active_ = false;

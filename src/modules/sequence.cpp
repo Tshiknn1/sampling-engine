@@ -20,6 +20,15 @@ T Sequence<T>::nextValue() {
 
 
 template<typename T>
+T& Sequence<T>::at(size_t index) {
+    if (index > values_.size()) {
+        values_.resize(index);
+    }
+    return values_.at(index);
+}
+
+
+template<typename T>
 T Sequence<T>::read() {
     if (active_) {
         return nextValue();
@@ -69,7 +78,7 @@ void Sequence<T>::stop() {
 
 template<typename T>
 void Sequence<T>::advance() {
-    pos_ = (pos_ + 1) % values_.size();
+    pos_ = (pos_ + 1) % size_;
 }
 
 

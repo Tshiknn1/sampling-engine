@@ -13,6 +13,10 @@ class SamplePlayer : public Generator<float> {
 
 public:
 
+    explicit SamplePlayer(AudioFormat af) {
+        setFormat(af);
+    }
+
     // read
     float read() override;
     float read() const override;

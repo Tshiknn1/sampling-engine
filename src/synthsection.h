@@ -2,12 +2,14 @@
 #define SYNTHSECTION_H
 
 #include <vector>
+#include <memory>
 
 #include "modules/generator.h"
 #include "modules/oscillator.h"
 #include "modules/trigger.h"
 #include "modules/envelope.h"
 #include "modules/sequence.h"
+#include "masterbus.h"
 
 
 namespace SE {
@@ -27,6 +29,17 @@ public:
         None
     };
 
+    explicit SynthSection(AudioFormat fmt) :
+        osc(fmt),
+        lfo(fmt),
+        trig(fmt),
+        env(fmt),
+        trigSeq(fmt),
+        pitchSeq(fmt)
+    {
+        setFormat(fmt);
+    }
+
     void initializeModules();
 
     void clearMods();
@@ -37,7 +50,19 @@ public:
     std::vector<float> read(const size_t& len) override;
     const std::vector<float> read(const size_t& len) const override;
 
-    void registerWithMasterBus(MasterBus* mb) const;
+    void start() override;
+    void stop() override;
+    void reset() override;
+    void refresh() override;
+    bool isActive() const override;
+
+    // ref getters
+    Oscillator& getOsc() { return osc; }
+    Oscillator& getLFO() { return lfo; }
+    Trigger& getTrigger() { return trig; }
+    Envelope& getEnv() { return env; }
+    Sequence<int>& getTrigSeq() { return trigSeq; }
+    Sequence<float>& getPitchSeq() { return pitchSeq; }
 
 private:
 

@@ -2,6 +2,7 @@
 #define QENDPOINT_H
 
 #include <limits>
+#include <memory>
 
 #include <QIODevice>
 #include <QAudioFormat>
