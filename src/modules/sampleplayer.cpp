@@ -94,6 +94,18 @@ void SamplePlayer::stop() {
 }
 
 
+void SamplePlayer::repitch(float pctDeviation) {
+    buf_size_ /= pctDeviation;
+    sample_buf_.resize(buf_size_);
+    size_t resizedPos;
+    for (size_t pos = 0; pos < buf_size_; pos++) {
+        resizedPos = pos * pctDeviation;
+        sample_buf_[pos] = sample_buf_[resizedPos]; // interpolation can come later
+    }
+    pos_ /= pctDeviation;
+}
+
+
 void SamplePlayer::loadSample(std::string path) {
     // std::ifstream fh;
     // fh.open(path, std::ios_base::in | std::ios_base::binary);

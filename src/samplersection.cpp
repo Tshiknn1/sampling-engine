@@ -138,4 +138,44 @@ const std::vector<float> SamplerSection::read(const size_t& len) const {
 }
 
 
+void SamplerSection::reset() {
+    player.reset();
+    lfo.reset();
+    env.reset();
+    trig.reset();
+    trigSeq.reset();
+    pitchSeq.reset();
+}
+
+
+void SamplerSection::start() {
+    player.start();
+    lfo.start();
+    env.start();
+    trig.start();
+    trigSeq.start();
+    pitchSeq.start();
+    active_ = true;
+}
+
+
+void SamplerSection::stop() {
+    player.stop();
+    lfo.stop();
+    env.stop();
+    trig.stop();
+    trigSeq.stop();
+    pitchSeq.stop();
+    active_ = false;
+}
+
+
+void SamplerSection::refresh() { }
+
+
+bool SamplerSection::isActive() const {
+    return active_;
+}
+
+
 }

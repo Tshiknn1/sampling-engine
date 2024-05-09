@@ -9,6 +9,7 @@
 #include <QFileDialog>
 
 #include <string>
+#include <iostream>
 
 #include "synthsection.h"
 #include "samplersection.h"
@@ -25,9 +26,13 @@ MainWindow::MainWindow(QWidget *parent)
     synthSection_(se_format_),
     samplerSection_(se_format_)
 {
+    std::cout << "mainwindow constructor" << std::endl;
     ui->setupUi(this);
+    std::cout << "ui setup complete" << std::endl;
     initializeWindow();
+    std::cout << "initializewindow complete" << std::endl;
     initializeAudio();
+    std::cout << "initializeaudio complete" << std::endl;
 }
 
 MainWindow::~MainWindow()
@@ -56,32 +61,32 @@ void MainWindow::initializeWindow() {
     connect(ui->deviceBox, SIGNAL(activated(int)), this, SLOT(deviceChanged(int)));
 
     // synth section waveform selector
-    connect(ui->synthSawButton, SIGNAL(toggled(bool)), this, SLOT([&] (bool checked) {
+    connect(ui->synthSawButton, &QRadioButton::toggled, this, [&] (bool checked) {
                 if (checked) {
                     synthSection_.getOsc().setWaveform(SE::Oscillator::Waveform::Saw);
                 }
-            }));
-    connect(ui->synthSquareButton, SIGNAL(toggled(bool)), this, SLOT([&] (bool checked) {
+            });
+    connect(ui->synthSquareButton, &QRadioButton::toggled, this, [&] (bool checked) {
                 if (checked) {
                     synthSection_.getOsc().setWaveform(SE::Oscillator::Waveform::Square);
                 }
-            }));
-    connect(ui->synthTriButton, SIGNAL(toggled(bool)), this, SLOT([&] (bool checked) {
+            });
+    connect(ui->synthTriButton, &QRadioButton::toggled, this, [&] (bool checked) {
                 if (checked) {
                     synthSection_.getOsc().setWaveform(SE::Oscillator::Waveform::Tri);
                 }
-            }));
-    connect(ui->synthNoiseButton, SIGNAL(toggled(bool)), this, SLOT([&] (bool checked) {
+            });
+    connect(ui->synthNoiseButton, &QRadioButton::toggled, this, [&] (bool checked) {
                 if (checked) {
                     synthSection_.getOsc().setWaveform(SE::Oscillator::Waveform::Noise);
                 }
-            }));
+            });
 
     // synth section frequency selector
     // NOTE: below is not going to work because of frequency sequencer
-    connect(ui->synthOscFreqEntry, SIGNAL(valueChanged(int)), this, SLOT([&] (int freq) {
-                synthSection_.getOsc().frequency() = freq;
-            }));
+    connect(ui->synthOscFreqEntry, &QDoubleSpinBox::valueChanged, this, [&] (double freq) {
+                synthSection_.getOsc().frequency() = static_cast<float>(freq);
+            });
 
     // synth section rhythmic sequencer
     connectCheckWithSeqSlot(ui->synthSeqCheck0, 0);
@@ -120,41 +125,41 @@ void MainWindow::initializeWindow() {
     connectSliderWithSeqSlot(ui->synthSeqSlider15, 15);
 
     // synth section envelope
-    connect(ui->synthEnvAtkSlider, SIGNAL(valueChanged(int)), this, SLOT([&] (int val) {
+    connect(ui->synthEnvAtkSlider, &QSlider::valueChanged, this, [&] (int val) {
                 synthSection_.getEnv().attack() = val * EnvSliderScalingFactor;
-            }));
-    connect(ui->synthEnvHoldSlider, SIGNAL(valueChanged(int)), this, SLOT([&] (int val) {
+            });
+    connect(ui->synthEnvHoldSlider, &QSlider::valueChanged, this, [&] (int val) {
                 synthSection_.getEnv().hold() = val * EnvSliderScalingFactor;
-            }));
-    connect(ui->synthEnvRelSlider, SIGNAL(valueChanged(int)), this, SLOT([&] (int val) {
+            });
+    connect(ui->synthEnvRelSlider, &QSlider::valueChanged, this, [&] (int val) {
                 synthSection_.getEnv().release() = val * EnvSliderScalingFactor;
-            }));
+            });
 
     // synth section LFO
-    connect(ui->synthLFOSawButton, SIGNAL(toggled(bool)), this, SLOT([&] (bool checked) {
+    connect(ui->synthLFOSawButton, &QRadioButton::toggled, this, [&] (bool checked) {
                 if (checked) {
                     synthSection_.getLFO().setWaveform(SE::Oscillator::Waveform::Saw);
                 }
-            }));
-    connect(ui->synthLFOSquareButton, SIGNAL(toggled(bool)), this, SLOT([&] (bool checked) {
+            });
+    connect(ui->synthLFOSquareButton, &QRadioButton::toggled, this, [&] (bool checked) {
                 if (checked) {
                     synthSection_.getLFO().setWaveform(SE::Oscillator::Waveform::Square);
                 }
-            }));
-    connect(ui->synthLFOTriButton, SIGNAL(toggled(bool)), this, SLOT([&] (bool checked) {
+            });
+    connect(ui->synthLFOTriButton, &QRadioButton::toggled, this, [&] (bool checked) {
                 if (checked) {
                     synthSection_.getLFO().setWaveform(SE::Oscillator::Waveform::Tri);
                 }
-            }));
-    connect(ui->synthLFONoiseButton, SIGNAL(toggled(bool)), this, SLOT([&] (bool checked) {
+            });
+    connect(ui->synthLFONoiseButton, &QRadioButton::toggled, this, [&] (bool checked) {
                 if (checked) {
                     synthSection_.getLFO().setWaveform(SE::Oscillator::Waveform::Noise);
                 }
-            }));
+            });
 
-    connect(ui->synthLFOFreqEntry, SIGNAL(valueChanged(double)), this, SLOT([&] (double val) {
+    connect(ui->synthLFOFreqEntry, &QDoubleSpinBox::valueChanged, this, [&] (double val) {
                 synthSection_.getLFO().frequency() = static_cast<float>(val);
-            }));
+            });
 
     ui->synthLFODestBox->addItem("Oscillator Frequency", QVariant::fromValue(SE::SynthSection::ModDestination::OscFreq));
     ui->synthLFODestBox->addItem("Oscillator Amplitude", QVariant::fromValue(SE::SynthSection::ModDestination::OscAmpl));
@@ -165,14 +170,14 @@ void MainWindow::initializeWindow() {
     ui->synthLFODestBox->addItem("All Envelope Rates", QVariant::fromValue(SE::SynthSection::ModDestination::EnvAll));
     ui->synthLFODestBox->addItem("None", QVariant::fromValue(SE::SynthSection::ModDestination::None));
     ui->synthLFODestBox->setCurrentText("None");
-    connect(ui->synthLFODestBox, SIGNAL(activated(int)), this, SLOT(updateSynthLFOMod(int)));
-    connect(ui->synthLFOAmtEntry, SIGNAL(valueChanged(double)), this, SLOT(updateSynthLFOMod(int)));
+    connect(ui->synthLFODestBox, &QComboBox::activated, this, &MainWindow::updateSynthLFOMod);
+    connect(ui->synthLFOAmtEntry, &QDoubleSpinBox::valueChanged, this, &MainWindow::updateSynthLFOMod);
 
     // sampler section
-    connect(ui->loadSampleButton, SIGNAL(triggered(QAction*)), this, SLOT(loadSample));
-    connect(ui->samplerPitchAdjEntry, SIGNAL(valueChanged(double)), this, SLOT([&] (double val) {
+    connect(ui->loadSampleButton, &QToolButton::triggered, this, &MainWindow::loadSample);
+    connect(ui->samplerPitchAdjEntry, &QDoubleSpinBox::valueChanged, this, [&] (double val) {
                 samplerSection_.getPlayer().repitch(val / samplerSection_.getPlayer().pitch());
-            }));
+            });
 
     // sampler rhythm sequencer
     connectCheckWithSeqSlot(ui->samplerSeqCheck0, 0);
@@ -211,41 +216,41 @@ void MainWindow::initializeWindow() {
     connectSliderWithSeqSlot(ui->samplerSeqSlider15, 15);
 
     // sampler envelope
-    connect(ui->samplerEnvAtkSlider, SIGNAL(valueChanged(int)), this, SLOT([&] (int val) {
+    connect(ui->samplerEnvAtkSlider, &QSlider::valueChanged, this, [&] (int val) {
                 samplerSection_.getEnv().attack() = val * EnvSliderScalingFactor;
-            }));
-    connect(ui->samplerEnvHoldSlider, SIGNAL(valueChanged(int)), this, SLOT([&] (int val) {
+            });
+    connect(ui->samplerEnvHoldSlider, &QSlider::valueChanged, this, [&] (int val) {
                 samplerSection_.getEnv().hold() = val * EnvSliderScalingFactor;
-            }));
-    connect(ui->samplerEnvRelSlider, SIGNAL(valueChanged(int)), this, SLOT([&] (int val) {
+            });
+    connect(ui->samplerEnvRelSlider, &QSlider::valueChanged, this, [&] (int val) {
                 samplerSection_.getEnv().release() = val * EnvSliderScalingFactor;
-            }));
+            });
 
     // synth section LFO
-    connect(ui->samplerLFOSawButton, SIGNAL(toggled(bool)), this, SLOT([&] (bool checked) {
+    connect(ui->samplerLFOSawButton, &QRadioButton::toggled, this, [&] (bool checked) {
                 if (checked) {
                     samplerSection_.getLFO().setWaveform(SE::Oscillator::Waveform::Saw);
                 }
-            }));
-    connect(ui->samplerLFOSquareButton, SIGNAL(toggled(bool)), this, SLOT([&] (bool checked) {
+            });
+    connect(ui->samplerLFOSquareButton, &QRadioButton::toggled, this, [&] (bool checked) {
                 if (checked) {
                     samplerSection_.getLFO().setWaveform(SE::Oscillator::Waveform::Square);
                 }
-            }));
-    connect(ui->samplerLFOTriButton, SIGNAL(toggled(bool)), this, SLOT([&] (bool checked) {
+            });
+    connect(ui->samplerLFOTriButton, &QRadioButton::toggled, this, [&] (bool checked) {
                 if (checked) {
                     samplerSection_.getLFO().setWaveform(SE::Oscillator::Waveform::Tri);
                 }
-            }));
-    connect(ui->samplerLFONoiseButton, SIGNAL(toggled(bool)), this, SLOT([&] (bool checked) {
+            });
+    connect(ui->samplerLFONoiseButton, &QRadioButton::toggled, this, [&] (bool checked) {
                 if (checked) {
                     samplerSection_.getLFO().setWaveform(SE::Oscillator::Waveform::Noise);
                 }
-            }));
+            });
 
-    connect(ui->samplerLFOFreqEntry, SIGNAL(valueChanged(double)), this, SLOT([&] (double val) {
+    connect(ui->samplerLFOFreqEntry, &QDoubleSpinBox::valueChanged, this, [&] (double val) {
                 samplerSection_.getLFO().frequency() = static_cast<float>(val);
-            }));
+            });
 
     ui->samplerLFODestBox->addItem("Sample Pitch", QVariant::fromValue(SE::SamplerSection::ModDestination::PlayerPitch));
     ui->samplerLFODestBox->addItem("Sample Amplitude", QVariant::fromValue(SE::SamplerSection::ModDestination::PlayerAmpl));
@@ -256,15 +261,15 @@ void MainWindow::initializeWindow() {
     ui->samplerLFODestBox->addItem("All Envelope Rates", QVariant::fromValue(SE::SamplerSection::ModDestination::EnvAll));
     ui->samplerLFODestBox->addItem("None", QVariant::fromValue(SE::SamplerSection::ModDestination::None));
     ui->samplerLFODestBox->setCurrentText("None");
-    connect(ui->samplerLFODestBox, SIGNAL(activated(int)), this, SLOT(updateSamplerLFOMod(int)));
-    connect(ui->samplerLFOAmtEntry, SIGNAL(valueChanged(double)), this, SLOT(updateSamplerLFOMod(int)));
+    connect(ui->samplerLFODestBox, &QComboBox::activated, this, &MainWindow::updateSamplerLFOMod);
+    connect(ui->samplerLFOAmtEntry, &QDoubleSpinBox::valueChanged, this, &MainWindow::updateSamplerLFOMod);
 
-    connect(ui->outputStartButton, &QPushButton::pressed, this, [=]{
+    connect(ui->outputStartButton, &QPushButton::pressed, this, [=] () {
         if (!endpoint_->isActive()) {
             endpoint_->start();
         }
     });
-    connect(ui->outputStopButton, &QPushButton::pressed, this, [=] {
+    connect(ui->outputStopButton, &QPushButton::pressed, this, [=] () {
         if (endpoint_->isActive()) {
             endpoint_->stop();
         }
@@ -272,7 +277,7 @@ void MainWindow::initializeWindow() {
 
     connect(this, &MainWindow::underrunDetected, this, &MainWindow::underrunMessage);
     connect(this, &MainWindow::stallDetected, this, &MainWindow::stallMessage);
-    connect(&stallDetector_, &QTimer::timeout, this, [=] {
+    connect(&stallDetector_, &QTimer::timeout, this, [=] () {
         if (running_) {
             if (endpoint_->lastBufferSize() == 0) {
                 emit stallDetected();
@@ -291,7 +296,6 @@ void MainWindow::initializeAudio() {
         }
     });
 
-    endpoint_->start();
     qint64 bufferLength = format_.bytesForDuration( buftime_ * 1000 );
     output_->setBufferSize(bufferLength);
     output_->start(endpoint_.get());
@@ -317,13 +321,13 @@ void MainWindow::stallMessage() {
 }
 
 
-void MainWindow::updateSynthLFOMod(int) {
+void MainWindow::updateSynthLFOMod(double) {
     synthSection_.changeMod(static_cast<SE::SynthSection::ModDestination>(ui->synthLFODestBox->currentData().toInt()),
                             ui->synthLFOAmtEntry->value());
 }
 
 
-void MainWindow::updateSamplerLFOMod(int) {
+void MainWindow::updateSamplerLFOMod(double) {
     samplerSection_.changeMod(static_cast<SE::SamplerSection::ModDestination>(ui->samplerLFODestBox->currentData().toInt()),
                               ui->samplerLFOAmtEntry->value());
 }

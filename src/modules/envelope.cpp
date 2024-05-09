@@ -106,33 +106,18 @@ const std::vector<float> Envelope::read(const size_t& len) const {
 }
 
 
-template<typename S>
-ModIndex Envelope::modulate(S* field,
-                            Modulator<S> fn,
-                            ModIndex index) {
-    ModIndex r;
-
-    CheckAndAdd(field, fn, &attack_, &attack_mods_, index);
-    if (r != NoIndex) { return r; }
-
-    CheckAndAdd(field, fn, &hold_, &hold_mods_, index);
-    if (r != NoIndex) { return r; }
-
-    CheckAndAdd(field, fn, &release_, &release_mods_, index);
-    if (r != NoIndex) { return r; }
-
-    CheckAndAdd(field, fn, this, &obj_mods_, index);
-    return r;
+void Envelope::start() {
+    reset();
+    active_ = true;
 }
 
 
-template<typename S>
-void Envelope::clearModulation(S* field, ModIndex index) {
-    CheckAndClear(field, &attack_, &attack_mods_, index);
-    CheckAndClear(field, &hold_, &hold_mods_, index);
-    CheckAndClear(field, &release_, &release_mods_, index);
-    CheckAndClear(field, this, &obj_mods_, index);
+void Envelope::stop() {
+    active_ = false;
 }
+
+
+void Envelope::refresh() { }
 
 
 }

@@ -52,10 +52,30 @@ public:
     // modulation control
     template<typename S>
     ModIndex modulate(S* field,
-                      Modulator<S> fn,
-                      ModIndex index = Generator::NoIndex);
+                                Modulator<S> fn,
+                                ModIndex index = NoIndex) {
+        ModIndex r = NoIndex;
+
+        CheckAndAdd(field, fn, &attack_, &attack_mods_, index);
+        if (r != NoIndex) { return r; }
+
+        CheckAndAdd(field, fn, &hold_, &hold_mods_, index);
+        if (r != NoIndex) { return r; }
+
+        CheckAndAdd(field, fn, &release_, &release_mods_, index);
+        if (r != NoIndex) { return r; }
+
+        CheckAndAdd(field, fn, this, &obj_mods_, index);
+        return r;
+    }
+
     template<typename S>
-    void clearModulation(S* field, ModIndex index);
+    void clearModulation(S* field, ModIndex index = NoIndex) {
+        CheckAndClear(field, &attack_, &attack_mods_, index);
+        CheckAndClear(field, &hold_, &hold_mods_, index);
+        CheckAndClear(field, &release_, &release_mods_, index);
+        CheckAndClear(field, this, &obj_mods_, index);
+    }
 
 private:
 

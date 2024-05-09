@@ -9,7 +9,6 @@
 #include "modules/trigger.h"
 #include "modules/envelope.h"
 #include "modules/sequence.h"
-#include "masterbus.h"
 
 
 namespace SE {

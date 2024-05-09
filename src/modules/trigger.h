@@ -25,7 +25,7 @@ public:
     const std::vector<int> read(const size_t& len) const override;
 
     void reset() override;
-    void refresh() override;
+    void refresh() override { }
     void start() override;
     void stop() override;
 
@@ -66,6 +66,28 @@ private:
     bool waiting_offset_;
 
 };
+
+
+template<typename S>
+ModIndex Trigger::modulate(S* field,
+                           Modulator<S> fn,
+                           ModIndex index) {
+    size_t r = NoIndex;
+
+    CheckAndAdd(field, fn, &delta_, &delta_mods_, index);
+    if (r != NoIndex) { return r; }
+
+    CheckAndAdd(field, fn, this, &obj_mods_, index);
+    return r;
+}
+
+
+template<typename S>
+void Trigger::clearModulation(S* field, ModIndex index) {
+    CheckAndClear(field, &delta_, &delta_mods_, index);
+    CheckAndClear(field, this, obj_mods_, index);
+}
+
 
 }
 

@@ -39,7 +39,7 @@ public:
     virtual bool isActive() const = 0;
 
     template<typename S>
-    ModIndex modulate(S* dest, Modulator<S> fn, ModIndex index) { }
+    ModIndex modulate(S* dest, Modulator<S> fn, ModIndex index) { return 0; }
     template<typename S>
     void clearModulation(S* dest, ModIndex index) { }
 
@@ -51,7 +51,7 @@ protected:
     static ModIndex CheckAndAdd(S* srcField,
                                 Modulator<S> fn,
                                 D* destField,
-                                std::vector<D>* destVect,
+                                std::vector<Modulator<D>>* destVect,
                                 ModIndex index) {
         if constexpr (std::is_same<S, D>::value) {
             if (srcField == destField) {
@@ -70,7 +70,7 @@ protected:
     template<typename S, typename D>
     static void CheckAndClear(S* srcField,
                               D* destField,
-                              std::vector<D>* destVect,
+                              std::vector<Modulator<D>>* destVect,
                               ModIndex index) {
         if constexpr (std::is_same<S, D>::value) {
             if (srcField == destField) {

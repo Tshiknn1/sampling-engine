@@ -95,6 +95,9 @@ private:
     ModIndex lfo_to_env_attack;
     ModIndex lfo_to_env_hold;
     ModIndex lfo_to_env_release;
+
+    // flags
+    bool active_;
 };
 
 

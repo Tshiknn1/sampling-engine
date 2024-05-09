@@ -33,17 +33,14 @@ public:
     void initializeAudio();
     void initializeAudioElements();
 
-    void updateSynthLFOMod(int);
-    void updateSamplerLFOMod(int);
-
-    void loadSample();
-
     void underrunMessage();
     void stallMessage();
 
 public slots:
-    void freqChanged(int freq);
     void deviceChanged(int device);
+    void updateSynthLFOMod(double);
+    void updateSamplerLFOMod(double);
+    void loadSample();
 
 signals:
     void underrunDetected();
@@ -51,15 +48,15 @@ signals:
 
 private:
     inline void connectCheckWithSeqSlot(QCheckBox* cb, const size_t& index) {
-        connect(cb, SIGNAL(checkStateChanged(Qt::CheckState)), this, SLOT([&] (Qt::CheckState state) {
+        connect(cb, &QCheckBox::stateChanged, this, [&] (int state) {
                     samplerSection_.getTrigSeq().at(index) = (state == Qt::Checked) ? 1 : 0;
-                }));
+                });
     }
 
     inline void connectSliderWithSeqSlot(QSlider* slider, const size_t& index) {
-        connect(slider, SIGNAL(valueChanged(int)), this, SLOT([&] (int val) {
+        connect(slider, &QSlider::valueChanged, this, [&] (int val) {
                     samplerSection_.getPitchSeq().at(index) = val;
-                }));
+                });
     }
 
     Ui::MainWindow *ui;

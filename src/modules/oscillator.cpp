@@ -80,32 +80,6 @@ void Oscillator::stop() {
 }
 
 
-template <typename S>
-ModIndex Oscillator::modulate(S* field,
-                              Modulator<S> fn,
-                              ModIndex index) {
-    ModIndex r = NoIndex;
-
-    CheckAndAdd(field, fn, &freq_, &freq_mods_, index);
-    if (r != NoIndex) return r;
-
-    CheckAndAdd(field, fn, &ampl_, &ampl_mods_, index);
-    if (r != NoIndex) return r;
-
-    CheckAndAdd(field, fn, this, &obj_mods_, index);
-    return r;
-}
-
-
-template<typename S>
-void Oscillator::clearModulation(S* field,
-                                 ModIndex index) {
-    CheckAndClear(field, &freq_, &freq_mods_, index);
-    CheckAndClear(field, &ampl_, &ampl_mods_, index);
-    CheckAndClear(field, this, &obj_mods_, index);
-}
-
-
 void Oscillator::setWaveform(const Waveform& wf) {
     wf_ = wf;
 
