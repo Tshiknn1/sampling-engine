@@ -12,30 +12,34 @@ namespace SE {
 
 
 void SynthSection::initializeModules() {
+    for (size_t i = 0; i < 16; i++) {
+        pitchSeq.at(i) = 440;
+    }
+
     env_to_osc = osc.modulate(&osc.amplitude(), Modulator<float>([&] (float* ptr) {
-        *ptr *= env.read();
+        *ptr = env.update();
     }));
 
     trig_to_env = env.modulate(&env, Modulator<Envelope>([&] (Envelope* ptr) {
-        if (trig.read() & trigSeq.read()) {
+        if (trig.update() & trigSeq.update()) {
             ptr->reset();
         }
     }));
 
-    trig_to_trigSeq = trigSeq.modulate(&trigSeq, Modulator<Sequence<int>>([=] (Sequence<int>* ptr) {
+    trig_to_trigSeq = trigSeq.modulate(&trigSeq, Modulator<Sequence<int>>([&] (Sequence<int>* ptr) {
         if (trig.read()) {
             ptr->advance();
         }
     }));
 
-    trig_to_pitchSeq = pitchSeq.modulate(&pitchSeq, Modulator<Sequence<float>>([=] (Sequence<float>* ptr) {
+    trig_to_pitchSeq = pitchSeq.modulate(&pitchSeq, Modulator<Sequence<float>>([&] (Sequence<float>* ptr) {
         if (trig.read()) {
             ptr->advance();
         }
     }));
 
     pitchSeq_to_osc = osc.modulate(&osc.frequency(), Modulator<float>([&] (float* ptr) {
-        *ptr = pitchSeq.read();
+        *ptr = pitchSeq.update();
     }));
 
     lfo_to_osc_freq = osc.modulate(&osc.frequency(), Modulator<float>([] (float* ptr) {}));
@@ -116,8 +120,8 @@ void SynthSection::changeMod(ModDestination dest, float amount) {
 }
 
 
-float SynthSection::read() {
-    output_val_ = osc.read();
+float SynthSection::update() {
+    output_val_ = osc.update();
     return output_val_;
 }
 
@@ -127,8 +131,8 @@ float SynthSection::read() const {
 }
 
 
-std::vector<float> SynthSection::read(const size_t& len) {
-    output_buf_ = osc.read(len);
+std::vector<float> SynthSection::update(const size_t& len) {
+    output_buf_ = osc.update(len);
     return output_buf_;
 }
 
@@ -139,6 +143,7 @@ const std::vector<float> SynthSection::read(const size_t& len) const {
 
 
 void SynthSection::start() {
+    std::cout << "hi from synthsection start" << std::endl;
     trig.start();
     trigSeq.start();
     pitchSeq.start();

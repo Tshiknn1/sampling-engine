@@ -27,9 +27,9 @@ public:
     }
 
     // read
-    float read() override;
+    float update() override;
+    std::vector<float> update(const size_t& len) override;
     float read() const override;
-    std::vector<float> read(const size_t& len) override;
     const std::vector<float> read(const size_t& len) const override;
 
     // change state
@@ -80,9 +80,9 @@ public:
 private:
 
     // parameters
-    size_t attack_;
-    size_t hold_;
-    size_t release_;
+    size_t attack_ = 10000;
+    size_t hold_ = 10000;
+    size_t release_ = 10000;
 
     // mod vectors
     std::vector<Modulator<size_t>> attack_mods_;

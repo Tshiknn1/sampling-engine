@@ -5,6 +5,7 @@
 
 #include <vector>
 #include <type_traits>
+#include <iostream>
 
 
 namespace SE {
@@ -19,10 +20,17 @@ public:
         Generator<T>::setFormat(af);
     }
 
+    explicit Sequence(AudioFormat af, size_t len) :
+        values_(len),
+        size_(len)
+    {
+        Generator<T>::setFormat(af);
+    }
+
     // read
-    T read() override;
+    T update() override;
+    std::vector<T> update(const size_t& len) override;
     T read() const override;
-    std::vector<T> read(const size_t& len) override;
     const std::vector<T> read(const size_t& len) const override;
 
     // change state
@@ -36,7 +44,10 @@ public:
     bool isActive() const override { return active_; }
 
     T& at(size_t index);
-    void resize(size_t size) { size_ = size; }
+    void resize(size_t size) {
+        size_ = size;
+        values_.resize(size_);
+    }
     constexpr size_t size() const { return size_; }
 
     // modulation control
@@ -51,7 +62,7 @@ private:
 
     // parameters
     std::vector<T> values_;
-    size_t size_;
+    size_t size_ = 0;
 
     // mod vectors
     std::vector<Modulator<std::vector<T>>> value_mods_;
@@ -89,14 +100,14 @@ T Sequence<T>::nextValue() {
 template<typename T>
 T& Sequence<T>::at(size_t index) {
     if (index > values_.size()) {
-        values_.resize(index);
+        resize(index);
     }
     return values_.at(index);
 }
 
 
 template<typename T>
-T Sequence<T>::read() {
+T Sequence<T>::update() {
     if (active_) {
         return nextValue();
     }
@@ -111,7 +122,7 @@ T Sequence<T>::read() const {
 
 
 template<typename T>
-std::vector<T> Sequence<T>::read(const size_t& len) {
+std::vector<T> Sequence<T>::update(const size_t& len) {
     if (active_) {
         std::vector<T> tmpBuf(len, 0);
         for (size_t i = 0; i < len; i++) {

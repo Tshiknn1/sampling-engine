@@ -29,6 +29,7 @@
 
 #include <vector>
 #include <random>
+#include <iostream>
 
 namespace SE {
 
@@ -41,12 +42,13 @@ public:
 
     explicit Oscillator(AudioFormat fmt) {
         setFormat(fmt);
+        setWaveform(Waveform::Saw);
     }
 
     // read
-    float read() override;
+    float update() override;
+    std::vector<float> update(const size_t& len) override;
     float read() const override;
-    std::vector<float> read(const size_t& len) override;
     const std::vector<float> read(const size_t& len) const override;
 
     // change state
@@ -81,8 +83,8 @@ public:
 private:
 
     // parameters
-    float freq_;
-    float ampl_;
+    float freq_ = 100;
+    float ampl_ = 1;
     Waveform wf_;
 
     // mod vectors
@@ -113,6 +115,8 @@ template<typename S>
 ModIndex Oscillator::modulate(S* field,
                   Modulator<S> fn,
                   ModIndex index) {
+    std::cout << "modulating" << std::endl;
+
     ModIndex r = NoIndex;
 
     CheckAndAdd(field, fn, &freq_, &freq_mods_, index);

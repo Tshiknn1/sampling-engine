@@ -16,9 +16,9 @@ public:
     }
 
 
-    float read() override;
+    float update() override;
+    std::vector<float> update(const size_t& len) override;
     float read() const override;
-    std::vector<float> read(const size_t& len) override;
     const std::vector<float> read(const size_t& len) const override;
 
     void start() override;

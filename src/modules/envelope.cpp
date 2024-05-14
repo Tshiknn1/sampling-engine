@@ -2,6 +2,7 @@
 #include "generator.h"
 
 #include <vector>
+#include <iostream>
 
 
 namespace SE {
@@ -74,7 +75,7 @@ float Envelope::nextValue() {
 }
 
 
-float Envelope::read() {
+float Envelope::update() {
     if (active_) {
         return nextValue();
     }
@@ -86,7 +87,7 @@ float Envelope::read() const {
     return output_val_;
 }
 
-std::vector<float> Envelope::read(const size_t& len) {
+std::vector<float> Envelope::update(const size_t& len) {
     std::vector<float> tmpBuf(len, 0.f);
     if (active_) {
         for (size_t i = 0; i < len; i++) {

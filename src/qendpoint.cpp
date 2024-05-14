@@ -2,6 +2,7 @@
 
 #include <QIODevice>
 #include <memory>
+#include <iostream>
 #include "modules/generator.h"
 
 
@@ -20,8 +21,8 @@ bool QEndpoint::isActive() const {
 }
 
 
-// note: is it wise to group these two actions together?
 void QEndpoint::start() {
+    std::cout << "hi from qendpoint start" << std::endl;
     open(QIODevice::ReadOnly | QIODevice::Unbuffered);
 }
 
@@ -46,7 +47,7 @@ qint64 QEndpoint::readData(char *data, qint64 maxlen) {
     Q_ASSERT(sampleBytes > 0);
     size_t numSamples = maxlen / sampleBytes;
 
-    std::vector<float> buf = master_->read(numSamples);
+    std::vector<float> buf = master_->update(numSamples);
     unsigned char *ptr = reinterpret_cast<unsigned char*>(data);
 
     for (size_t i = 0; i < numSamples; i++) {

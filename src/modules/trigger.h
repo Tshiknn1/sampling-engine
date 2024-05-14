@@ -17,11 +17,13 @@ public:
 
     explicit Trigger(AudioFormat af) {
         setFormat(af);
+        delta_ = 44100;
+        fixed_delta_ = 44100;
     }
 
-    int read() override;
+    int update() override;
+    std::vector<int> update(const size_t& len) override;
     int read() const override;
-    std::vector<int> read(const size_t& len) override;
     const std::vector<int> read(const size_t& len) const override;
 
     void reset() override;
@@ -48,9 +50,9 @@ public:
 private:
 
     // parameters
-    size_t fixed_delta_;
-    size_t delta_;
-    size_t offset_; // number of samples after reset before first trig
+    size_t fixed_delta_ = sampleRate_;
+    size_t delta_ = sampleRate_;
+    size_t offset_ = 0; // number of samples after reset before first trig
 
     // mod vectors
     std::vector<Modulator<size_t>> delta_mods_;
@@ -59,7 +61,7 @@ private:
     // output
     std::vector<int> outputBuf_;  // stores outgoing buffer for modulation
     int output_;
-    size_t pos_;
+    size_t pos_ = 0;
 
     // flags
     bool active_;

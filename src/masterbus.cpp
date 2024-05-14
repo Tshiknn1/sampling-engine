@@ -4,6 +4,7 @@
 
 #include <vector>
 #include <algorithm>
+#include <iostream>
 
 namespace SE {
 
@@ -14,6 +15,7 @@ void MasterBus::addAudioGen(Generator<float>* gen) {
 
 
 void MasterBus::start() {
+    std::cout << "hi from masterbus start" << std::endl;
     for (Generator<float>* gen : audioGens_) {
         gen->start();
     }
@@ -48,10 +50,10 @@ bool MasterBus::isActive() const {
 }
 
 
-float MasterBus::read() {
+float MasterBus::update() {
     output_val_ = 0.f;
     for (Generator<float>* gen : audioGens_) {
-        output_val_ += gen->read();
+        output_val_ += gen->update();
     }
     if (output_val_ > 1.f) {
         output_val_ = 1.f;
@@ -65,12 +67,12 @@ float MasterBus::read() const {
 }
 
 
-std::vector<float> MasterBus::read(const size_t& len) {
+std::vector<float> MasterBus::update(const size_t& len) {
     output_buf_.resize(len);
     std::fill(output_buf_.begin(), output_buf_.end(), 0.f);
 
     for (size_t i = 0; i < len; i++) {
-        output_buf_[i] = read();
+        output_buf_[i] = update();
     }
 
     return output_buf_;

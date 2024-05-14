@@ -54,11 +54,55 @@ void MainWindow::initializeWindow() {
     }
     ui->deviceBox->setCurrentText(defaultDeviceInfo.description());
 
+    ui->synthSeqTempoEntry->setRange(20.0, 600.0);
+
+    ui->synthSeqSlider0->setRange(20, 2000);
+    ui->synthSeqSlider1->setRange(20, 2000);
+    ui->synthSeqSlider2->setRange(20, 2000);
+    ui->synthSeqSlider3->setRange(20, 2000);
+    ui->synthSeqSlider4->setRange(20, 2000);
+    ui->synthSeqSlider5->setRange(20, 2000);
+    ui->synthSeqSlider6->setRange(20, 2000);
+    ui->synthSeqSlider7->setRange(20, 2000);
+    ui->synthSeqSlider8->setRange(20, 2000);
+    ui->synthSeqSlider9->setRange(20, 2000);
+    ui->synthSeqSlider10->setRange(20, 2000);
+    ui->synthSeqSlider11->setRange(20, 2000);
+    ui->synthSeqSlider12->setRange(20, 2000);
+    ui->synthSeqSlider13->setRange(20, 2000);
+    ui->synthSeqSlider14->setRange(20, 2000);
+    ui->synthSeqSlider15->setRange(20, 2000);
+
+    ui->synthSeqSlider0->setValue(440);
+    ui->synthSeqSlider1->setValue(440);
+    ui->synthSeqSlider2->setValue(440);
+    ui->synthSeqSlider3->setValue(440);
+    ui->synthSeqSlider4->setValue(440);
+    ui->synthSeqSlider5->setValue(440);
+    ui->synthSeqSlider6->setValue(440);
+    ui->synthSeqSlider7->setValue(440);
+    ui->synthSeqSlider8->setValue(440);
+    ui->synthSeqSlider9->setValue(440);
+    ui->synthSeqSlider10->setValue(440);
+    ui->synthSeqSlider11->setValue(440);
+    ui->synthSeqSlider12->setValue(440);
+    ui->synthSeqSlider13->setValue(440);
+    ui->synthSeqSlider14->setValue(440);
+    ui->synthSeqSlider15->setValue(440);
+
+    ui->synthEnvAtkSlider->setRange(0, format_.sampleRate() * 5);
+    ui->synthEnvHoldSlider->setRange(0, format_.sampleRate() * 5);
+    ui->synthEnvRelSlider->setRange(0, format_.sampleRate() * 5);
+
     endpoint_.reset(new QEndpoint(format_, &engine_));
     engine_.addAudioGen(&synthSection_);
     engine_.addAudioGen(&samplerSection_);
 
     connect(ui->deviceBox, SIGNAL(activated(int)), this, SLOT(deviceChanged(int)));
+
+    connect(ui->synthSeqTempoEntry, &QDoubleSpinBox::valueChanged, this, [&] (double val) {
+        synthSection_.getTrigger().delta() = format_.sampleRate() * 60 / val;
+    });
 
     // synth section waveform selector
     connect(ui->synthSawButton, &QRadioButton::toggled, this, [&] (bool checked) {
@@ -266,12 +310,12 @@ void MainWindow::initializeWindow() {
 
     connect(ui->outputStartButton, &QPushButton::pressed, this, [=] () {
         if (!endpoint_->isActive()) {
-            endpoint_->start();
+            endpoint_->playStart();
         }
     });
     connect(ui->outputStopButton, &QPushButton::pressed, this, [=] () {
         if (endpoint_->isActive()) {
-            endpoint_->stop();
+            endpoint_->playStop();
         }
     });
 
@@ -295,6 +339,11 @@ void MainWindow::initializeAudio() {
             emit underrunDetected();
         }
     });
+
+    synthSection_.initializeModules();
+    // samplerSection_.initializeModules();
+
+    endpoint_->start();
 
     qint64 bufferLength = format_.bytesForDuration( buftime_ * 1000 );
     output_->setBufferSize(bufferLength);

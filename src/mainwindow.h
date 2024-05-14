@@ -14,6 +14,7 @@
 #include "samplersection.h"
 
 #include <memory>
+#include <iostream>
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
@@ -47,16 +48,24 @@ signals:
     void stallDetected();
 
 private:
-    inline void connectCheckWithSeqSlot(QCheckBox* cb, const size_t& index) {
-        connect(cb, &QCheckBox::stateChanged, this, [&] (int state) {
-                    samplerSection_.getTrigSeq().at(index) = (state == Qt::Checked) ? 1 : 0;
-                });
+    inline void connectCheckWithSeqSlot(QCheckBox* cb, const size_t index) {
+        connect(cb, &QCheckBox::stateChanged, this, [&, index] (int state) {
+            synthSection_.getTrigSeq().at(index) = (state == Qt::Checked) ? 1 : 0;
+            for (size_t i = 0; i < 16; i++) {
+                std::cout << synthSection_.getTrigSeq().at(i) << ' ';
+            }
+            std::cout << std::endl;
+        });
     }
 
-    inline void connectSliderWithSeqSlot(QSlider* slider, const size_t& index) {
-        connect(slider, &QSlider::valueChanged, this, [&] (int val) {
-                    samplerSection_.getPitchSeq().at(index) = val;
-                });
+    inline void connectSliderWithSeqSlot(QSlider* slider, const size_t index) {
+        connect(slider, &QSlider::valueChanged, this, [&, index] (int val) {
+            synthSection_.getPitchSeq().at(index) = val;
+            for (size_t i = 0; i < 16; i++) {
+                std::cout << synthSection_.getPitchSeq().at(i) << ' ';
+            }
+            std::cout << std::endl;
+        });
     }
 
     Ui::MainWindow *ui;

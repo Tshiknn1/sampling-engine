@@ -21,9 +21,9 @@ class Generator {
 
 public:
 
-    virtual T read() = 0;
+    virtual T update() = 0;
+    virtual std::vector<T> update(const size_t&) = 0;
     virtual T read() const = 0;
-    virtual std::vector<T> read(const size_t&) = 0;
     virtual const std::vector<T> read(const size_t&) const = 0;
 
     virtual void reset() = 0;

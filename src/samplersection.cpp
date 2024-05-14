@@ -13,11 +13,11 @@ namespace SE {
 
 void SamplerSection::initializeModules() {
     env_to_player = player.modulate(&player.amplitude(), Modulator<float>([&] (float* ptr) {
-        *ptr *= env.read();
+        *ptr *= env.update();
     }));
 
     trig_to_env = env.modulate(&env, Modulator<Envelope>([&] (Envelope* ptr) {
-        if (trig.read() & trigSeq.read()) {
+        if (trig.update() & trigSeq.update()) {
             ptr->reset();
         }
     }));
@@ -116,8 +116,8 @@ void SamplerSection::changeMod(ModDestination dest, float amount) {
 }
 
 
-float SamplerSection::read() {
-    output_val_ = player.read();
+float SamplerSection::update() {
+    output_val_ = player.update();
     return output_val_;
 }
 
@@ -127,8 +127,9 @@ float SamplerSection::read() const {
 }
 
 
-std::vector<float> SamplerSection::read(const size_t& len) {
-    output_buf_ = player.read(len);
+std::vector<float> SamplerSection::update(const size_t& len) {
+    std::cout << "hi from samplersection read vec" << std::endl;
+    output_buf_ = player.update(len);
     return output_buf_;
 }
 

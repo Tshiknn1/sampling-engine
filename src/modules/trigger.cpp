@@ -3,11 +3,12 @@
 
 #include "trigger.h"
 #include "generator.h"
+#include <iostream>
 
 namespace SE {
 
 
-int Trigger::read() {
+int Trigger::update() {
     int output = 0;
 
     if (active_) {
@@ -19,7 +20,7 @@ int Trigger::read() {
             mod(&delta_);
         }
 
-        if (waiting_offset_ && pos_ >= offset_) {
+        if (waiting_offset_ && (pos_ >= offset_)) {
             output = 1;
             pos_ = pos_ - offset_;
             waiting_offset_ = false;
@@ -41,7 +42,7 @@ int Trigger::read() const {
 }
 
 
-std::vector<int> Trigger::read(const size_t& len) {
+std::vector<int> Trigger::update(const size_t& len) {
     std::vector<int> tmpBuf(len, 0);
 
     if (active_) {
@@ -83,6 +84,7 @@ const std::vector<int> Trigger::read(const size_t& len) const {
 
 
 void Trigger::reset() {
+    std::cout << delta_ << std::endl;
     pos_ = 0;
     delta_ = fixed_delta_;
     waiting_offset_ = true;

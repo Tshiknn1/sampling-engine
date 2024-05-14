@@ -2,6 +2,7 @@
 #include "oscillator.h"
 
 #include <vector>
+#include <iostream>
 
 
 namespace SE {
@@ -22,13 +23,13 @@ float Oscillator::nextValue() {
         mod(&ampl_);
     }
 
-    output_val_ = activeGen_(freq_, pos_) * ampl_;
-    pos_ = (pos_ + 1) % static_cast<size_t>(ceil(freq_ * sampleRate_));
+    output_val_ = activeGen_(pos_, freq_) * ampl_;
+    pos_ = (pos_ + 1) % static_cast<size_t>(ceil(sampleRate_ / freq_));
     return output_val_;
 }
 
 
-float Oscillator::read() {
+float Oscillator::update() {
     if (active_) {
         return nextValue();
     }
@@ -41,7 +42,7 @@ float Oscillator::read() const {
 }
 
 
-std::vector<float> Oscillator::read(const size_t& len) {
+std::vector<float> Oscillator::update(const size_t& len) {
     std::vector<float> tmpBuf(len, 0.f);
     if (active_) {
         for (size_t i = 0; i < len; i++) {
@@ -70,6 +71,7 @@ void Oscillator::refresh() { }
 
 
 void Oscillator::start() {
+    std::cout << "hi from oscillator start" << std::endl;
     reset();
     active_ = true;
 }
@@ -92,7 +94,7 @@ void Oscillator::setWaveform(const Waveform& wf) {
 
     case Waveform::Square:
         activeGen_ = [&] (size_t pos, float freq) {
-            return (pos < (sampleRate_ / freq) * 2) ? 1.f : -1.f;
+            return (pos < (sampleRate_ / (freq * 2))) ? 1.f : -1.f;
         };
         break;
 

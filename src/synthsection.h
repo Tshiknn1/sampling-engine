@@ -33,8 +33,8 @@ public:
         lfo(fmt),
         trig(fmt),
         env(fmt),
-        trigSeq(fmt),
-        pitchSeq(fmt)
+        trigSeq(fmt, 16),
+        pitchSeq(fmt, 16)
     {
         setFormat(fmt);
     }
@@ -44,9 +44,9 @@ public:
     void clearMods();
     void changeMod(ModDestination dest, float amount);
 
-    float read() override;
+    float update() override;
+    std::vector<float> update(const size_t& len) override;
     float read() const override;
-    std::vector<float> read(const size_t& len) override;
     const std::vector<float> read(const size_t& len) const override;
 
     void start() override;

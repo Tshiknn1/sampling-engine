@@ -9,6 +9,7 @@ namespace SE {
 
 
 float SamplePlayer::nextValue() {
+    if (sample_buf_.size() == 0) { return 0; }
     for (Modulator<SamplePlayer> mod : obj_mods_) {
         mod(this);
     }
@@ -37,12 +38,16 @@ float SamplePlayer::nextValue() {
         pos_ = start_ + pos_ - end_;
     }
 
-    output_val_ = sample_buf_[pos_] * ampl_;
+    if (sample_buf_.size() == 0) {
+        output_val_ = 0;
+    } else {
+        output_val_ = sample_buf_[pos_] * ampl_;
+    }
     return output_val_;
 }
 
 
-float SamplePlayer::read() {
+float SamplePlayer::update() {
     if (active_) {
         return nextValue();
     }
@@ -55,7 +60,7 @@ float SamplePlayer::read() const {
 }
 
 
-std::vector<float> SamplePlayer::read(const size_t& len) {
+std::vector<float> SamplePlayer::update(const size_t& len) {
     std::vector<float> tmpBuf(len, 0.f);
     if (active_) {
         for (size_t i = 0; i < len; i++) {
@@ -84,6 +89,7 @@ void SamplePlayer::refresh() { }
 
 
 void SamplePlayer::start() {
+    std::cout << "hi from sampleplayer start" << std::endl;
     reset();
     active_ = true;
 }
