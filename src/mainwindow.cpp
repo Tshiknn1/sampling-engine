@@ -445,7 +445,6 @@ void MainWindow::stallMessage() {
 
 
 void MainWindow::updateSynthLFOMod(double) {
-    std::cout << ui->synthLFODestBox->currentData().toInt();
     synthSection_.changeLFOMod(static_cast<SE::SynthSection::ModDestination>(ui->synthLFODestBox->currentData().toInt()),
                                (ui->synthLFOAmtEntry->value() / 100));
 }

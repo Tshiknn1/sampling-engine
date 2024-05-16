@@ -1,4 +1,4 @@
-QT       += core gui
+QT       += core gui multimedia
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -9,24 +9,34 @@ CONFIG += c++17
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
-    src/basicosc.cpp \
+    src/modules/envelope.cpp \
+    src/modules/oscillator.cpp \
+    src/modules/sampleplayer.cpp \
+    src/modules/trigger.cpp \
     src/main.cpp \
     src/mainwindow.cpp \
+    src/masterbus.cpp \
     src/qendpoint.cpp \
-    src/sescript.cpp
+    src/samplersection.cpp \
+    src/synthsection.cpp
 
 HEADERS += \
-    src/basicosc.h \
+    src/AudioFile.h \
+    src/audioformat.h \
     src/mainwindow.h \
+    src/masterbus.h \
     src/qendpoint.h \
-    src/sebase.h \
-    src/sescript.h
+    src/samplersection.h \
+    src/synthsection.h \
+    src/modules/envelope.h \
+    src/modules/generator.h \
+    src/modules/oscillator.h \
+    src/modules/sampleplayer.h \
+    src/modules/sequence.h \
+    src/modules/trigger.h
 
 FORMS += \
     src/mainwindow.ui
-
-QT += \
-    multimedia
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
