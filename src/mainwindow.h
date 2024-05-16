@@ -48,23 +48,15 @@ signals:
     void stallDetected();
 
 private:
-    inline void connectCheckWithSeqSlot(QCheckBox* cb, const size_t index) {
-        connect(cb, &QCheckBox::stateChanged, this, [&, index] (int state) {
-            synthSection_.getTrigSeq().at(index) = (state == Qt::Checked) ? 1 : 0;
-            for (size_t i = 0; i < 16; i++) {
-                std::cout << synthSection_.getTrigSeq().at(i) << ' ';
-            }
-            std::cout << std::endl;
+    inline void connectCheckWithSeqSlot(QCheckBox* cb, const size_t index, SE::SynthSection* target) {
+        connect(cb, &QCheckBox::stateChanged, this, [&, index, target] (int state) {
+            target->getTrigSeq().at(index) = (state == Qt::Checked) ? 1 : 0;
         });
     }
 
-    inline void connectSliderWithSeqSlot(QSlider* slider, const size_t index) {
-        connect(slider, &QSlider::valueChanged, this, [&, index] (int val) {
-            synthSection_.getPitchSeq().at(index) = val;
-            for (size_t i = 0; i < 16; i++) {
-                std::cout << synthSection_.getPitchSeq().at(i) << ' ';
-            }
-            std::cout << std::endl;
+    inline void connectSliderWithSeqSlot(QSlider* slider, const size_t index, SE::SynthSection* target) {
+        connect(slider, &QSlider::valueChanged, this, [&, index, target] (int val) {
+            target->getPitchSeq().at(index) = val * PitchSliderScalingFactor;
         });
     }
 
@@ -80,8 +72,9 @@ private:
     std::unique_ptr<QEndpoint> endpoint_;
     SE::MasterBus engine_;
     SE::SynthSection synthSection_;
-    SE::SamplerSection samplerSection_;
+    SE::SynthSection samplerSection_;
 
-    const size_t EnvSliderScalingFactor = 1;
+    constexpr static float PitchSliderScalingFactor = 0.1f;
+    const float EnvSliderScalingFactor = 0.1f;
 };
 #endif // MAINWINDOW_H

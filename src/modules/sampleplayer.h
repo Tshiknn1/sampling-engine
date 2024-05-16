@@ -94,19 +94,19 @@ ModIndex SamplePlayer::modulate(S* field,
                                 ModIndex index) {
     ModIndex r = NoIndex;
 
-    CheckAndAdd(field, fn, &pitch_, &pitch_mods_, index);
+    r = CheckAndAdd(field, fn, &pitch_, &pitch_mods_, index);
     if (r != NoIndex) return r;
 
-    CheckAndAdd(field, fn, &ampl_, &ampl_mods_, index);
+    r = CheckAndAdd(field, fn, &ampl_, &ampl_mods_, index);
     if (r != NoIndex) return r;
 
-    CheckAndAdd(field, fn, &start_, &start_mods_, index);
+    r = CheckAndAdd(field, fn, &start_, &start_mods_, index);
     if (r != NoIndex) return r;
 
-    CheckAndAdd(field, fn, &end_, &end_mods_, index);
+    r = CheckAndAdd(field, fn, &end_, &end_mods_, index);
     if (r != NoIndex) return r;
 
-    CheckAndAdd(field, fn, this, &obj_mods_, index);
+    r = CheckAndAdd(field, fn, this, &obj_mods_, index);
     return r;
 }
 

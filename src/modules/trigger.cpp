@@ -16,6 +16,7 @@ int Trigger::update() {
             mod(this);
         }
 
+        delta_ = fixed_delta_;
         for (Modulator<size_t> mod : delta_mods_) {
             mod(&delta_);
         }

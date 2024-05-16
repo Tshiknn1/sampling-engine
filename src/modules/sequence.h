@@ -177,10 +177,10 @@ ModIndex Sequence<T>::modulate(S* field,
                                ModIndex index) {
     size_t r = Generator<T>::NoIndex;
 
-    Generator<T>::CheckAndAdd(field, fn, &values_, &value_mods_, index);
+    r = Generator<T>::CheckAndAdd(field, fn, &values_, &value_mods_, index);
     if (r != Generator<T>::NoIndex) { return r; }
 
-    Generator<T>::CheckAndAdd(field, fn, this, &obj_mods_, index);
+    r = Generator<T>::CheckAndAdd(field, fn, this, &obj_mods_, index);
     return r;
 }
 

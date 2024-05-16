@@ -76,10 +76,10 @@ ModIndex Trigger::modulate(S* field,
                            ModIndex index) {
     size_t r = NoIndex;
 
-    CheckAndAdd(field, fn, &delta_, &delta_mods_, index);
+    r = CheckAndAdd(field, fn, &delta_, &delta_mods_, index);
     if (r != NoIndex) { return r; }
 
-    CheckAndAdd(field, fn, this, &obj_mods_, index);
+    r = CheckAndAdd(field, fn, this, &obj_mods_, index);
     return r;
 }
 

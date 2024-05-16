@@ -60,7 +60,7 @@
      </rect>
     </property>
     <property name="title">
-     <string>Synth Voice</string>
+     <string>Synth Voice A</string>
     </property>
     <widget class="QGroupBox" name="synthOscGroup">
      <property name="geometry">
@@ -887,7 +887,7 @@
      </rect>
     </property>
     <property name="title">
-     <string>Sampler Voice</string>
+     <string>Synth Voice B</string>
     </property>
     <widget class="QGroupBox" name="groupBox_9">
      <property name="geometry">
@@ -899,9 +899,9 @@
       </rect>
      </property>
      <property name="title">
-      <string>Sample Player</string>
+      <string>Oscillator</string>
      </property>
-     <widget class="QDoubleSpinBox" name="samplerPitchAdjEntry">
+     <widget class="QDoubleSpinBox" name="samplerOscFreqEntry">
       <property name="geometry">
        <rect>
         <x>71</x>
@@ -909,19 +909,6 @@
         <width>71</width>
         <height>22</height>
        </rect>
-      </property>
-     </widget>
-     <widget class="QLabel" name="label_10">
-      <property name="geometry">
-       <rect>
-        <x>30</x>
-        <y>40</y>
-        <width>71</width>
-        <height>16</height>
-       </rect>
-      </property>
-      <property name="text">
-       <string>Load Sample</string>
       </property>
      </widget>
      <widget class="QLabel" name="label_11">
@@ -934,20 +921,72 @@
        </rect>
       </property>
       <property name="text">
-       <string>Pitch Adj.</string>
+       <string>Frequency</string>
       </property>
      </widget>
-     <widget class="QToolButton" name="loadSampleButton">
+     <widget class="QRadioButton" name="samplerNoiseButton">
       <property name="geometry">
        <rect>
-        <x>110</x>
-        <y>40</y>
-        <width>22</width>
-        <height>21</height>
+        <x>70</x>
+        <y>80</y>
+        <width>89</width>
+        <height>20</height>
        </rect>
       </property>
       <property name="text">
-       <string>...</string>
+       <string>Noise</string>
+      </property>
+     </widget>
+     <widget class="QRadioButton" name="samplerSquareButton">
+      <property name="geometry">
+       <rect>
+        <x>70</x>
+        <y>40</y>
+        <width>89</width>
+        <height>20</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Square</string>
+      </property>
+     </widget>
+     <widget class="QLabel" name="label_10">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>50</y>
+        <width>61</width>
+        <height>16</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Waveform</string>
+      </property>
+     </widget>
+     <widget class="QRadioButton" name="samplerSawButton">
+      <property name="geometry">
+       <rect>
+        <x>70</x>
+        <y>20</y>
+        <width>89</width>
+        <height>20</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Sawtooth</string>
+      </property>
+     </widget>
+     <widget class="QRadioButton" name="samplerTriButton">
+      <property name="geometry">
+       <rect>
+        <x>70</x>
+        <y>60</y>
+        <width>89</width>
+        <height>20</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Triangle</string>
       </property>
      </widget>
     </widget>
@@ -1171,7 +1210,7 @@
        <enum>Qt::Vertical</enum>
       </property>
      </widget>
-     <widget class="QDoubleSpinBox" name="doubleSpinBox_7">
+     <widget class="QDoubleSpinBox" name="samplerSeqTempoEntry">
       <property name="geometry">
        <rect>
         <x>110</x>

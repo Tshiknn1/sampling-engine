@@ -13,20 +13,21 @@ namespace SE {
 
 void SynthSection::initializeModules() {
     for (size_t i = 0; i < 16; i++) {
-        pitchSeq.at(i) = 440;
+        pitchSeq.at(i) = 1;
     }
 
-    env_to_osc = osc.modulate(&osc.amplitude(), Modulator<float>([&] (float* ptr) {
-        *ptr = env.update();
+    Envelope& e = env;
+    env_to_osc = osc.modulate(&osc.amplitude(), Modulator<float>([&e] (float* ptr) {
+        *ptr = e.update();
     }));
 
-    trig_to_env = env.modulate(&env, Modulator<Envelope>([&] (Envelope* ptr) {
+    trig_to_env = env.modulate(&env, Modulator<Envelope>([this] (Envelope* ptr) {
         if (trig.update() & trigSeq.update()) {
             ptr->reset();
         }
     }));
 
-    trig_to_trigSeq = trigSeq.modulate(&trigSeq, Modulator<Sequence<int>>([&] (Sequence<int>* ptr) {
+    trig_to_trigSeq = trigSeq.modulate(&trigSeq, Modulator<Sequence<int>>([this] (Sequence<int>* ptr) {
         if (trig.read()) {
             ptr->advance();
         }
@@ -39,7 +40,7 @@ void SynthSection::initializeModules() {
     }));
 
     pitchSeq_to_osc = osc.modulate(&osc.frequency(), Modulator<float>([&] (float* ptr) {
-        *ptr = pitchSeq.update();
+        *ptr *= pitchSeq.update();
     }));
 
     lfo_to_osc_freq = osc.modulate(&osc.frequency(), Modulator<float>([] (float* ptr) {}));
@@ -51,7 +52,7 @@ void SynthSection::initializeModules() {
 }
 
 
-void SynthSection::clearMods() {
+void SynthSection::clearLFOMods() {
     osc.modulate(&osc.frequency(), Modulator<float>([] (float* ptr) {}), lfo_to_osc_freq);
     osc.modulate(&osc.amplitude(), Modulator<float>([] (float* ptr) {}), lfo_to_osc_ampl);
     trig.modulate(&trig.delta(), Modulator<size_t>([] (size_t* ptr) {}), lfo_to_trig_delta);
@@ -61,49 +62,51 @@ void SynthSection::clearMods() {
 }
 
 
-void SynthSection::changeMod(ModDestination dest, float amount) {
-    clearMods();
+void SynthSection::changeLFOMod(ModDestination dest, float amount) {
+    clearLFOMods();
+    std::cout << "changeLFOMod called, amount " << amount << std::endl;
 
     switch (dest) {
 
     case ModDestination::OscFreq:
-        osc.modulate(&osc.frequency(), Modulator<float>([&] (float* ptr) {
-            *ptr *= (1 + (lfo.read() * amount));
+        std::cout << "osc freq selected" << std::endl;
+        osc.modulate(&osc.frequency(), Modulator<float>([this, amount] (float* ptr) {
+            *ptr *= 1 + (lfo.update() * amount);
         }), lfo_to_osc_freq);
         break;
 
     case ModDestination::OscAmpl:
-        osc.modulate(&osc.amplitude(), Modulator<float>([&] (float* ptr) {
-            *ptr *= (1 + (lfo.read() * amount));
+        osc.modulate(&osc.amplitude(), Modulator<float>([this, amount] (float* ptr) {
+            *ptr *= (1 + (lfo.update() * amount));
         }), lfo_to_osc_ampl);
         break;
 
     case ModDestination::TrigDelta:
-        trig.modulate(&trig.delta(), Modulator<size_t>([&] (size_t* ptr) {
-            *ptr *= (1 + (lfo.read() * amount));
+        trig.modulate(&trig.delta(), Modulator<size_t>([this, amount] (size_t* ptr) {
+            *ptr *= (1 + (lfo.update() * amount));
         }), lfo_to_trig_delta);
         break;
 
     case ModDestination::EnvAttack:
-        env.modulate(&env.attack(), Modulator<size_t>([&] (size_t* ptr) {
-            *ptr *= (1 + (lfo.read() * amount));
+        env.modulate(&env.attack(), Modulator<size_t>([this, amount] (size_t* ptr) {
+            *ptr *= (1 + (lfo.update() * amount));
         }), lfo_to_env_attack);
         break;
 
     case ModDestination::EnvHold:
-        env.modulate(&env.hold(), Modulator<size_t>([&] (size_t* ptr) {
-            *ptr *= (1 + (lfo.read() * amount));
+        env.modulate(&env.hold(), Modulator<size_t>([this, amount] (size_t* ptr) {
+            *ptr *= (1 + (lfo.update() * amount));
         }), lfo_to_env_hold);
         break;
 
     case ModDestination::EnvRelease:
-        env.modulate(&env.release(), Modulator<size_t>([&] (size_t* ptr) {
-            *ptr *= (1 + (lfo.read() * amount));
+        env.modulate(&env.release(), Modulator<size_t>([this, amount] (size_t* ptr) {
+            *ptr *= (1 + (lfo.update() * amount));
         }), lfo_to_env_release);
         break;
 
     case ModDestination::EnvAll:
-        env.modulate(&env.attack(), Modulator<size_t>([&] (size_t* ptr) {
+        env.modulate(&env.attack(), Modulator<size_t>([this, amount] (size_t* ptr) {
             *ptr *= (1 + (lfo.read() * amount));
         }), lfo_to_env_attack);
         env.modulate(&env.hold(), Modulator<size_t>([=] (size_t* ptr) {
@@ -115,6 +118,7 @@ void SynthSection::changeMod(ModDestination dest, float amount) {
         break;
 
     case ModDestination::None:
+    default:
         break;
     }
 }

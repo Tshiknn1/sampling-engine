@@ -56,16 +56,16 @@ public:
                                 ModIndex index = NoIndex) {
         ModIndex r = NoIndex;
 
-        CheckAndAdd(field, fn, &attack_, &attack_mods_, index);
+        r = CheckAndAdd(field, fn, &attack_, &attack_mods_, index);
         if (r != NoIndex) { return r; }
 
-        CheckAndAdd(field, fn, &hold_, &hold_mods_, index);
+        r = CheckAndAdd(field, fn, &hold_, &hold_mods_, index);
         if (r != NoIndex) { return r; }
 
-        CheckAndAdd(field, fn, &release_, &release_mods_, index);
+        r = CheckAndAdd(field, fn, &release_, &release_mods_, index);
         if (r != NoIndex) { return r; }
 
-        CheckAndAdd(field, fn, this, &obj_mods_, index);
+        r = CheckAndAdd(field, fn, this, &obj_mods_, index);
         return r;
     }
 

@@ -41,8 +41,8 @@ public:
 
     void initializeModules();
 
-    void clearMods();
-    void changeMod(ModDestination dest, float amount);
+    void clearLFOMods();
+    void changeLFOMod(ModDestination dest, float amount);
 
     float update() override;
     std::vector<float> update(const size_t& len) override;

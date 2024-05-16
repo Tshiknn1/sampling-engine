@@ -15,7 +15,6 @@ void MasterBus::addAudioGen(Generator<float>* gen) {
 
 
 void MasterBus::start() {
-    std::cout << "hi from masterbus start" << std::endl;
     for (Generator<float>* gen : audioGens_) {
         gen->start();
     }

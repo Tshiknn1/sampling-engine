@@ -71,10 +71,12 @@ public:
 
     // handle getters
     float& frequency() { return freq_; }
+    float& fixedFrequency() { return fixed_freq_; }
     float& amplitude() { return ampl_; }
 
     // const getters
     constexpr float frequency() const { return freq_; }
+    constexpr float fixedFrequency() const { return fixed_freq_; }
     constexpr float amplitude() const { return ampl_; }
 
     // class-specific access methods
@@ -83,7 +85,8 @@ public:
 private:
 
     // parameters
-    float freq_ = 100;
+    float fixed_freq_ = 100;
+    float freq_ = fixed_freq_;
     float ampl_ = 1;
     Waveform wf_;
 
@@ -115,17 +118,17 @@ template<typename S>
 ModIndex Oscillator::modulate(S* field,
                   Modulator<S> fn,
                   ModIndex index) {
-    std::cout << "modulating" << std::endl;
+    std::cout << "modulating with index " << index << std::endl;
 
     ModIndex r = NoIndex;
 
-    CheckAndAdd(field, fn, &freq_, &freq_mods_, index);
+    r = CheckAndAdd(field, fn, &freq_, &freq_mods_, index);
     if (r != NoIndex) return r;
 
-    CheckAndAdd(field, fn, &ampl_, &ampl_mods_, index);
+    r = CheckAndAdd(field, fn, &ampl_, &ampl_mods_, index);
     if (r != NoIndex) return r;
 
-    CheckAndAdd(field, fn, this, &obj_mods_, index);
+    r = CheckAndAdd(field, fn, this, &obj_mods_, index);
     return r;
 }
 

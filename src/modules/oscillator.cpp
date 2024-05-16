@@ -14,10 +14,14 @@ float Oscillator::nextValue() {
     }
 
     float oldFreq = freq_;
+    freq_ = fixed_freq_;
     for (Modulator<float> mod : freq_mods_) {
         mod(&freq_);
     }
-    pos_ = pos_ * (oldFreq / freq_);
+    // std::cout << pos_ << "->";
+    // pos_ = static_cast<size_t>(pos_ * (freq_ / oldFreq))
+    //        % static_cast<size_t>(ceil(sampleRate_ / freq_));
+    // std::cout << pos_ << std::endl;
 
     for (Modulator<float> mod : ampl_mods_) {
         mod(&ampl_);
@@ -71,7 +75,6 @@ void Oscillator::refresh() { }
 
 
 void Oscillator::start() {
-    std::cout << "hi from oscillator start" << std::endl;
     reset();
     active_ = true;
 }
